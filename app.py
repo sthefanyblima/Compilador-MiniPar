@@ -12,12 +12,12 @@ def index():
     if request.method == 'POST':
         codigo_original = request.form['codigo']
         
-        # Chama a função do compilador, esperando 5 valores de retorno
-        tokens, msg_parser, codigo_c3e, codigo_asm, erros = compilar_codigo(codigo_original)
+        # A segunda variável agora é a string da AST
+        tokens, ast_formatada, codigo_c3e, codigo_asm, erros = compilar_codigo(codigo_original)
 
         resultados = {
             'tokens': tokens,
-            'msg_parser': msg_parser,
+            'ast_formatada': ast_formatada, # Passa a AST para o template
             'codigo_c3e': codigo_c3e,
             'codigo_asm': codigo_asm,
             'erros': erros

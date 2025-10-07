@@ -1,8 +1,31 @@
+# motor_compilador.py
 import sys
 from sly import Lexer, Parser
 
+# --- FUNÇÃO AUXILIAR PARA FORMATAR A AST ---
+def formatar_ast(node, level=0):
+    """
+    Função recursiva para criar uma representação de string formatada da AST.
+    """
+    if node is None:
+        return ""
+    
+    indent = '  ' * level
+    result = f"{indent}- {node[0]}\n"
+    
+    for item in node[1:]:
+        if isinstance(item, tuple):
+            result += formatar_ast(item, level + 1)
+        elif isinstance(item, list):
+            for sub_item in item:
+                result += formatar_ast(sub_item, level + 1)
+        elif item is not None:
+            result += f"{'  ' * (level + 1)}- '{item}'\n"
+            
+    return result
+
 # ---------------------------------------
-#   FASE 1: ANALISADOR LÉXICO (LEXER)
+#   CLASSES DO LEXER, PARSER, ANÁLISE SEMÂNTICA, GERAÇÃO DE CÓDIGO C3E E ASM
 # ---------------------------------------
 class MiniParLexer(Lexer):
     tokens = {
@@ -62,9 +85,6 @@ class MiniParLexer(Lexer):
         self.index += 1
         return t
 
-# ------------------------------
-#   ANALISADOR SEMÂNTICO
-# ------------------------------
 class SemanticAnalyzer:
     def __init__(self):
         self.symbol_table = {}
@@ -113,14 +133,10 @@ class SemanticAnalyzer:
         var_name = node[1]
         if var_name not in self.symbol_table:
             self.errors.append(f"Erro Semântico: Variável '{var_name}' não foi declarada antes do uso.")
-
-# -----------------------------------------------------------------------------
-#   FASE 2: ANALISADOR SINTÁTICO (PARSER) - (COM SUPORTE A NÚMEROS NEGATIVOS)
-# -----------------------------------------------------------------------------
+            
 class MiniParParser(Parser):
     tokens = MiniParLexer.tokens
     
-    # --- Adicionando precedência para o operador unário 'UMINUS' ---
     precedence = (
         ('left', 'OP_SOMA', 'OP_SUB'),
         ('left', 'OP_MULT', 'OP_DIV'),
@@ -201,7 +217,6 @@ class MiniParParser(Parser):
     def expressao(self, p):
         return ('binop', p[1], p.expressao0, p.expressao1)
         
-    # --- Nova regra para o operador "menos unário" ---
     @_('OP_SUB expressao %prec UMINUS') # type: ignore
     def expressao(self, p):
         return ('unop', '-', p.expressao)
@@ -222,9 +237,6 @@ class MiniParParser(Parser):
         else:
             self.syntax_errors.append("Erro de Sintaxe: Fim de arquivo inesperado. Verifique se 'fim_programa' está presente.")
 
-# -----------------------------------------------------------------------------
-#   FASE 3: GERADOR C3E - (COM SUPORTE A OPERAÇÃO UNÁRIA)
-# -----------------------------------------------------------------------------
 class C3EGenerator:
     def __init__(self):
         self.code = []
@@ -321,11 +333,9 @@ class C3EGenerator:
         self.emit(f"{temp} = {left} {op} {right}")
         return temp
 
-    # --- Novo método para gerar código para a operação unária ---
     def _generate_unop(self, node):
         expr_result = self.generate(node[2])
         temp = self.new_temp()
-        # Converte a negação em uma subtração de zero
         self.emit(f"{temp} = 0 - {expr_result}")
         return temp
 
@@ -335,9 +345,6 @@ class C3EGenerator:
     def _generate_numero(self, node):
         return str(node[1])
 
-# -----------------------------------------------------------------------------
-#   FASE 4: GERADOR DE CÓDIGO ASSEMBLY (ARMv7) - VERSÃO BARE-METAL (DE1-SoC)
-# -----------------------------------------------------------------------------
 class ARMv7CodeGenerator:
     def __init__(self, declared_vars):
         self.declared_vars = declared_vars
@@ -346,14 +353,12 @@ class ARMv7CodeGenerator:
         self._setup_data_section()
 
     def _setup_data_section(self):
-        # Nenhuma formatação de string é necessária nesta versão
         for var in self.declared_vars:
             self.data_section.append(f"{var}: .word 0")
 
     def generate(self, tac_code):
-        # Endereços de periféricos da placa DE1-SoC
-        HEX_DISPLAY_ADDR = "0xFF200020"  # Endereço dos displays HEX3-HEX0
-        SWITCHES_ADDR = "0xFF200040"      # Endereço dos switches SW9-SW0
+        HEX_DISPLAY_ADDR = "0xFF200020"
+        SWITCHES_ADDR = "0xFF200040"
         
         for line in tac_code:
             parts = line.split()
@@ -369,7 +374,6 @@ class ARMv7CodeGenerator:
                 self.text_section.append(f"    BEQ {parts[3]}")
             
             elif parts[0] == 'leia':
-                # Lê o valor dos switches e armazena na variável
                 dest_var = parts[1]
                 self.text_section.append(f"    LDR r0, ={SWITCHES_ADDR}")
                 self.text_section.append(f"    LDR r1, [r0]")
@@ -377,7 +381,6 @@ class ARMv7CodeGenerator:
                 self.text_section.append(f"    STR r1, [r2]")
             
             elif parts[0] == 'escreva':
-                # Escreve o valor da expressão no display de 7 segmentos
                 self._load_operand_to_reg(parts[1], 'r1')
                 self.text_section.append(f"    LDR r0, ={HEX_DISPLAY_ADDR}")
                 self.text_section.append(f"    STR r1, [r0]")
@@ -418,13 +421,12 @@ class ARMv7CodeGenerator:
             self.text_section.append(f"    LDR {reg}, [{reg}]")
 
     def finalize(self):
-        # Mantém o programa em um loop infinito no final, comum para bare-metal
         self.text_section.extend([
             "exit_program:", 
             "    B exit_program" 
         ])
-        # Remove as referências externas a printf e scanf
         return self.data_section + self.text_section
+
 
 # --- FUNÇÃO PRINCIPAL DO COMPILADOR ---
 def compilar_codigo(codigo_fonte):
@@ -433,7 +435,8 @@ def compilar_codigo(codigo_fonte):
     semantic_analyzer = SemanticAnalyzer()
     c3e_generator = C3EGenerator()
     
-    saida_lexer, saida_parser, saida_c3e, saida_asm, erros = [], "", [], [], ""
+    # Modificado para retornar a string da AST
+    saida_lexer, saida_ast, saida_c3e, saida_asm, erros = [], "", [], [], ""
 
     tokens = list(lexer.tokenize(codigo_fonte))
     tokens_validos = []
@@ -454,12 +457,14 @@ def compilar_codigo(codigo_fonte):
         erros += "Erro de Sintaxe: Falha desconhecida. Verifique a estrutura geral."
         return saida_lexer, "Erro na Análise Sintática.", [], [], erros
     
-    saida_parser = "Análise sintática concluída com sucesso. AST gerada."
+    # Gera a string formatada da AST para exibição
+    saida_ast = formatar_ast(ast)
     
     semantic_analyzer.visit(ast)
     if semantic_analyzer.errors:
         erros += "\n".join(semantic_analyzer.errors)
-        return saida_lexer, saida_parser, [], [], erros
+        # Retorna a AST mesmo se houver erro semântico
+        return saida_lexer, saida_ast, [], [], erros
 
     c3e_generator.generate(ast)
     saida_c3e = c3e_generator.code
@@ -468,4 +473,5 @@ def compilar_codigo(codigo_fonte):
     asm_generator = ARMv7CodeGenerator(all_vars)
     saida_asm = asm_generator.generate(saida_c3e)
     
-    return saida_lexer, saida_parser, saida_c3e, saida_asm, erros
+    # Retorna a AST formatada no segundo valor
+    return saida_lexer, saida_ast, saida_c3e, saida_asm, erros

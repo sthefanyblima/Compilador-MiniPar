@@ -133,7 +133,8 @@
 {% endfor %}</pre>
 
             <h2>FASE 2: Análise Sintática</h2>
-            <pre>{{ resultados.msg_parser }}</pre>
+            <p>Análise sintática concluída com sucesso. AST gerada:</p>
+            <pre>{{ resultados.ast_formatada }}</pre>
 
             <h2>FASE 3: Código de Três Endereços</h2>
             <pre>{% for instrucao in resultados.codigo_c3e %}{{ instrucao }}
