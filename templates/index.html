@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Compilador MiniPar 2025.1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .editor,
+        .output {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .editor {
+            margin-right: 20px;
+        }
+
+        h1,
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #5b6ee1;
+            padding-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 60vh;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #5b6ee1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background-color: #4a5acc;
+        }
+
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="editor">
+            <h1>Editor MiniPar</h1>
+            <form method="post">
+                <textarea name="codigo" placeholder="Digite seu código MiniPar aqui...">{{ codigo_original }}</textarea>
+                <button type="submit">Compilar</button>
+            </form>
+        </div>
+        <div class="output">
+            <h1>Resultado da Compilação</h1>
+            {% if resultados %}
+            {% if resultados.erros %}
+            <h2>Erros</h2>
+            <pre class="error">{{ resultados.erros }}</pre>
+            {% else %}
+            <h2>FASE 1: Análise Léxica</h2>
+            <pre>{% for token in resultados.tokens %}{{ token }}
+{% endfor %}</pre>
+
+            <h2>FASE 2: Análise Sintática</h2>
+            <pre>{{ resultados.msg_parser }}</pre>
+
+            <h2>FASE 3: Código de Três Endereços</h2>
+            <pre>{% for instrucao in resultados.codigo_c3e %}{{ instrucao }}
+{% endfor %}</pre>
+            {% endif %}
+            {% else %}
+            <p>Aguardando código para compilar...</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>
