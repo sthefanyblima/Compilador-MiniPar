@@ -1,2 +1,0 @@
-﻿# Compilador (não Orientado a Objetos) MiniPar 2025.1
-
