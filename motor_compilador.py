@@ -1,10 +1,9 @@
-# motor_compilador.py
 import sys
 from sly import Lexer, Parser
 
-# -----------------------------------------------------------------------------
+# ---------------------------------------
 #   FASE 1: ANALISADOR LÉXICO (LEXER)
-# -----------------------------------------------------------------------------
+# ---------------------------------------
 class MiniParLexer(Lexer):
     tokens = {
         'PROGRAMA', 'FIM_PROGRAMA', 'DECLARE', 'INTEIRO', 'REAL', 'SE', 'ENTAO', 'SENAO',
@@ -63,9 +62,9 @@ class MiniParLexer(Lexer):
         self.index += 1
         return t
 
-# -----------------------------------------------------------------------------
-#   NOVA FASE: ANALISADOR SEMÂNTICO
-# -----------------------------------------------------------------------------
+# ------------------------------
+#   ANALISADOR SEMÂNTICO
+# ------------------------------
 class SemanticAnalyzer:
     def __init__(self):
         self.symbol_table = {}
@@ -121,7 +120,7 @@ class SemanticAnalyzer:
 class MiniParParser(Parser):
     tokens = MiniParLexer.tokens
     
-    # --- ALTERAÇÃO AQUI: Adicionando precedência para o operador unário 'UMINUS' ---
+    # --- Adicionando precedência para o operador unário 'UMINUS' ---
     precedence = (
         ('left', 'OP_SOMA', 'OP_SUB'),
         ('left', 'OP_MULT', 'OP_DIV'),
@@ -202,7 +201,7 @@ class MiniParParser(Parser):
     def expressao(self, p):
         return ('binop', p[1], p.expressao0, p.expressao1)
         
-    # --- ALTERAÇÃO AQUI: Nova regra para o operador "menos unário" ---
+    # --- Nova regra para o operador "menos unário" ---
     @_('OP_SUB expressao %prec UMINUS') # type: ignore
     def expressao(self, p):
         return ('unop', '-', p.expressao)
@@ -322,7 +321,7 @@ class C3EGenerator:
         self.emit(f"{temp} = {left} {op} {right}")
         return temp
 
-    # --- ALTERAÇÃO AQUI: Novo método para gerar código para a operação unária ---
+    # --- Novo método para gerar código para a operação unária ---
     def _generate_unop(self, node):
         expr_result = self.generate(node[2])
         temp = self.new_temp()
