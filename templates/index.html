@@ -26,6 +26,8 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 95vh;
         }
 
         .editor {
@@ -72,11 +74,39 @@
             border-radius: 5px;
             white-space: pre-wrap;
             font-family: 'Courier New', Courier, monospace;
+            word-wrap: break-word;
         }
 
         .error {
             color: red;
             font-weight: bold;
+        }
+
+        .header-with-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #5b6ee1;
+            padding-bottom: 10px;
+        }
+
+        .header-with-button h2 {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin: 0;
+        }
+
+        #copyAsmBtn {
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #6c757d;
+            width: auto;
+            margin-top: 0;
+            transition: background-color 0.2s;
+        }
+
+        #copyAsmBtn:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
@@ -86,7 +116,8 @@
         <div class="editor">
             <h1>Editor MiniPar</h1>
             <form method="post">
-                <textarea name="codigo" placeholder="Digite seu código MiniPar aqui...">{{ codigo_original }}</textarea>
+                <textarea name="codigo"
+                    placeholder="Digite seu código MiniPar aqui...">{{ codigo_original }}</textarea>
                 <button type="submit">Compilar</button>
             </form>
         </div>
@@ -102,17 +133,49 @@
 {% endfor %}</pre>
 
             <h2>FASE 2: Análise Sintática</h2>
-            <pre>{{ resultados.msg_parser }}</pre>
+            <p>Análise sintática concluída com sucesso. AST gerada:</p>
+            <pre>{{ resultados.ast_formatada }}</pre>
 
             <h2>FASE 3: Código de Três Endereços</h2>
             <pre>{% for instrucao in resultados.codigo_c3e %}{{ instrucao }}
 {% endfor %}</pre>
+
+            <div class="header-with-button">
+                <h2>FASE 4: Código Assembly (ARMv7)</h2>
+                <button id="copyAsmBtn" onclick="copyAsmCode()">Copiar Código</button>
+            </div>
+            <pre id="asmCode">{% for instrucao in resultados.codigo_asm %}{{ instrucao }}
+{% endfor %}</pre>
+            <p><b>Para usar no CPULator:</b> Copie o código Assembly, cole no editor do CPULator, clique em "Assemble & Load" e depois em "Run".</p>
             {% endif %}
             {% else %}
             <p>Aguardando código para compilar...</p>
             {% endif %}
         </div>
     </div>
+
+    <script>
+        function copyAsmCode() {
+            const asmCodeElement = document.getElementById('asmCode');
+            const copyButton = document.getElementById('copyAsmBtn');
+
+            if (asmCodeElement) {
+                const codeToCopy = asmCodeElement.innerText;
+                navigator.clipboard.writeText(codeToCopy).then(() => {
+                    const originalText = copyButton.innerText;
+                    copyButton.innerText = 'Copiado!';
+                    copyButton.style.backgroundColor = '#28a745';
+                    setTimeout(() => {
+                        copyButton.innerText = originalText;
+                        copyButton.style.backgroundColor = '#6c757d';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Erro ao copiar o código: ', err);
+                    alert('Falha ao copiar o código.');
+                });
+            }
+        }
+    </script>
 </body>
 
 </html>
