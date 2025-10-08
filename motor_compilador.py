@@ -1,4 +1,3 @@
-# motor_compilador.py
 import sys
 from sly import Lexer, Parser
 
@@ -43,7 +42,7 @@ class MiniParLexer(Lexer):
     ignore_comment_c = r'//.*'
     ignore_comment_c_multi = r'/\*[\s\S]*?\*/'
 
-    # CORREÇÃO 1 (de antes): Ordem dos tokens para evitar conflito léxico
+    # Ordem dos tokens para evitar conflito léxico
     OP_REL          = r'==|!=|<=|>=|<|>'
     ATRIBUICAO      = r'='
     
@@ -205,11 +204,7 @@ class MiniParParser(Parser):
     def laco(self, p):
         return ('enquanto', p.expressao_logica, p.lista_comandos)
 
-    # NOVAS REGRAS PARA CONDICIONAL E SENAO
-
-    # REGRAS CORRIGIDAS PARA CONDICIONAL
-
-    # REGRAS COMPLETAMENTE REVISADAS PARA CONDICIONAL
+    # REGRAS PARA CONDICIONAL E SENAO
 
     @_('SE ABRE_PARENTESES expressao_logica FECHA_PARENTESES ENTAO lista_comandos FIM_SE') # type: ignore
     def condicional(self, p):
@@ -222,12 +217,6 @@ class MiniParParser(Parser):
     @_('SE ABRE_PARENTESES expressao_logica FECHA_PARENTESES ENTAO lista_comandos SENAO condicional') # type: ignore
     def condicional(self, p):
         return ('se', p.expressao_logica, p.lista_comandos, ('senao_se', p.condicional))
-
-# REMOVA COMPLETAMENTE as regras senao_parte que estão causando conflito
-
-    # REMOVA COMPLETAMENTE as regras senao_parte anteriores
-
-  
 
     @_('expressao OP_REL expressao') # type: ignore
     def expressao_logica(self, p):
@@ -278,7 +267,6 @@ class MiniParParser(Parser):
             self.syntax_errors.append("Erro de Sintaxe: Fim de arquivo inesperado. Verifique se 'fim_programa' está presente.")
 
 class C3EGenerator:
-    # (Nenhuma alteração nesta classe)
     def __init__(self):
         self.code = []
         self.temp_count = 0
