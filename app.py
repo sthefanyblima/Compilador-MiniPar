@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, request
 from motor_compilador import compilar_codigo
 
@@ -12,7 +11,6 @@ def index():
     if request.method == 'POST':
         codigo_original = request.form['codigo']
         
-        # A segunda variável agora é a string da AST
         tokens, ast_formatada, codigo_c3e, codigo_asm, erros = compilar_codigo(codigo_original)
 
         resultados = {
