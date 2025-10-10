@@ -196,8 +196,28 @@ class MiniParParser(Parser):
     def leitura(self, p):
         return ('leia', p.ID)
 
+    @_('LEIA ID') # type: ignore
+    def leitura(self, p):
+        self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Esperado '(' após 'leia'")
+        return ('leia', p.ID)
+
+    @_('LEIA ABRE_PARENTESES ID') # type: ignore
+    def leitura(self, p):
+        self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Esperado ')' após identificador em 'leia'")
+        return ('leia', p.ID)
+
     @_('ESCREVA ABRE_PARENTESES expressao FECHA_PARENTESES') # type: ignore
     def escrita(self, p):
+        return ('escreva', p.expressao)
+
+    @_('ESCREVA expressao') # type: ignore
+    def escrita(self, p):
+        self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Esperado '(' após 'escreva'")
+        return ('escreva', p.expressao)
+
+    @_('ESCREVA ABRE_PARENTESES expressao') # type: ignore
+    def escrita(self, p):
+        self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Esperado ')' após expressão em 'escreva'")
         return ('escreva', p.expressao)
 
     @_('ENQUANTO ABRE_PARENTESES expressao_logica FECHA_PARENTESES FACA lista_comandos FIM_ENQUANTO') # type: ignore
@@ -262,7 +282,12 @@ class MiniParParser(Parser):
 
     def error(self, p):
         if p:
-            self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Token inesperado '{p.value}' do tipo '{p.type}'")
+            if p.type == 'LEIA':
+                self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Esperado '(' após 'leia'")
+            elif p.type == 'ESCREVA':
+                self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Esperado '(' após 'escreva'")
+            else:
+                self.syntax_errors.append(f"Erro de Sintaxe na linha {p.lineno}: Token inesperado '{p.value}' do tipo '{p.type}'")
         else:
             self.syntax_errors.append("Erro de Sintaxe: Fim de arquivo inesperado. Verifique se 'fim_programa' está presente.")
 
@@ -468,7 +493,6 @@ class ARMv7CodeGenerator:
         return self.finalize()
 
     def _load_operand_to_reg(self, operand, reg):
-        # --- CORREÇÃO 3 (de antes): Usar MOV para números e LDR para variáveis ---
         if operand.isdigit() or (operand.startswith('-') and operand[1:].isdigit()):
             self.text_section.append(f"    MOV {reg}, #{operand}")
         else:
