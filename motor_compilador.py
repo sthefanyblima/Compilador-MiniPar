@@ -494,7 +494,7 @@ class ARMv7CodeGenerator:
 
     def _load_operand_to_reg(self, operand, reg):
         if operand.isdigit() or (operand.startswith('-') and operand[1:].isdigit()):
-            self.text_section.append(f"    MOV {reg}, #{operand}")
+            self.text_section.append(f"    LDR {reg}, ={operand}")
         else:
             self.text_section.append(f"    LDR {reg}, ={operand}")
             self.text_section.append(f"    LDR {reg}, [{reg}]")
