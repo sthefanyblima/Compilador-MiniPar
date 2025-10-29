@@ -1,0 +1,2713 @@
+Grammar:
+
+Rule 0     S' -> programa
+Rule 1     programa -> PROGRAMA declaracoes funcoes bloco FIM_PROGRAMA
+Rule 2     empty -> <empty>
+Rule 3     declaracoes -> <empty>
+Rule 4     declaracoes -> declaracoes DECLARE tipo : ID
+Rule 5     tipo -> REAL
+Rule 6     tipo -> VOID
+Rule 7     tipo -> C_CHANNEL
+Rule 8     tipo -> STRING
+Rule 9     tipo -> BOOL
+Rule 10    tipo -> INT
+Rule 11    funcoes -> <empty>
+Rule 12    funcoes -> funcoes funcao
+Rule 13    funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF
+Rule 14    params -> <empty>
+Rule 15    params -> param_lista
+Rule 16    param_lista -> param
+Rule 17    param_lista -> param_lista COMMA param
+Rule 18    param -> tipo : ID
+Rule 19    bloco -> <empty>
+Rule 20    bloco -> bloco comando
+Rule 21    comando -> par_bloco
+Rule 22    comando -> comando_return
+Rule 23    comando -> comando_send
+Rule 24    comando -> comando_escreva
+Rule 25    comando -> comando_leia
+Rule 26    comando -> comando_enquanto
+Rule 27    comando -> comando_se
+Rule 28    comando -> comando_atribuicao
+Rule 29    comando_atribuicao -> ID ASSIGN expr
+Rule 30    comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE
+Rule 31    comando_se -> SE expr ENTAO bloco FIM_SE
+Rule 32    comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO
+Rule 33    comando_leia -> LEIA LPAREN ID RPAREN
+Rule 34    comando_escreva -> ESCREVA LPAREN expr RPAREN
+Rule 35    par_bloco -> PAR bloco FIM_PAR
+Rule 36    comando_send -> SEND LPAREN ID COMMA expr RPAREN
+Rule 37    comando_return -> RETURN
+Rule 38    comando_return -> RETURN expr
+Rule 39    expr -> fator_expr GE fator_expr
+Rule 40    expr -> fator_expr GT fator_expr
+Rule 41    expr -> fator_expr LE fator_expr
+Rule 42    expr -> fator_expr LT fator_expr
+Rule 43    expr -> fator_expr NE fator_expr
+Rule 44    expr -> fator_expr EQ fator_expr
+Rule 45    expr -> termo
+Rule 46    expr -> expr MENOS termo  [precedence=left, level=1]
+Rule 47    expr -> expr MAIS termo  [precedence=left, level=1]
+Rule 48    termo -> fator
+Rule 49    termo -> termo DIVIDE fator  [precedence=left, level=2]
+Rule 50    termo -> termo VEZES fator  [precedence=left, level=2]
+Rule 51    fator_expr -> fator
+Rule 52    fator -> receive_expr
+Rule 53    fator -> call
+Rule 54    fator -> LPAREN expr RPAREN
+Rule 55    fator -> ID
+Rule 56    fator -> STRING_LITERAL
+Rule 57    fator -> NUMERO_REAL
+Rule 58    fator -> NUMERO_INT
+Rule 59    call -> ID LPAREN args RPAREN
+Rule 60    receive_expr -> RECEIVE LPAREN ID RPAREN
+Rule 61    args -> <empty>
+Rule 62    args -> arg_lista
+Rule 63    arg_lista -> expr
+Rule 64    arg_lista -> arg_lista COMMA expr
+
+Terminals, with rules where they appear:
+
+:                    : 4 18
+ARROW                : 13
+ASSIGN               : 29
+BOOL                 : 9
+COMMA                : 17 36 64
+C_CHANNEL            : 7
+DECLARE              : 4
+DEF                  : 13
+DIVIDE               : 49
+ENQUANTO             : 32
+ENTAO                : 30 31
+EQ                   : 44
+ESCREVA              : 34
+FACA                 : 32
+FIM_DEF              : 13
+FIM_ENQUANTO         : 32
+FIM_PAR              : 35
+FIM_PROGRAMA         : 1
+FIM_SE               : 30 31
+GE                   : 39
+GT                   : 40
+ID                   : 4 13 18 29 33 36 55 59 60
+INT                  : 10
+LE                   : 41
+LEIA                 : 33
+LPAREN               : 13 33 34 36 54 59 60
+LT                   : 42
+MAIS                 : 47
+MENOS                : 46
+NE                   : 43
+NUMERO_INT           : 58
+NUMERO_REAL          : 57
+PAR                  : 35
+PROGRAMA             : 1
+REAL                 : 5
+RECEIVE              : 60
+RETURN               : 37 38
+RPAREN               : 13 33 34 36 54 59 60
+SE                   : 30 31
+SENAO                : 30
+SEND                 : 36
+STRING               : 8
+STRING_LITERAL       : 56
+VEZES                : 50
+VOID                 : 6
+error                : 
+
+Nonterminals, with rules where they appear:
+
+arg_lista            : 62 64
+args                 : 59
+bloco                : 1 13 20 30 30 31 32 35
+call                 : 53
+comando              : 20
+comando_atribuicao   : 28
+comando_enquanto     : 26
+comando_escreva      : 24
+comando_leia         : 25
+comando_return       : 22
+comando_se           : 27
+comando_send         : 23
+declaracoes          : 1 4 13
+empty                : 
+expr                 : 29 30 31 32 34 36 38 46 47 54 63 64
+fator                : 48 49 50 51
+fator_expr           : 39 39 40 40 41 41 42 42 43 43 44 44
+funcao               : 12
+funcoes              : 1 12
+par_bloco            : 21
+param                : 16 17
+param_lista          : 15 17
+params               : 13
+programa             : 0
+receive_expr         : 52
+termo                : 45 46 47 49 50
+tipo                 : 4 13 18
+
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . PROGRAMA declaracoes funcoes bloco FIM_PROGRAMA
+    PROGRAMA        shift and go to state 2
+
+    programa                       shift and go to state 1
+
+state 1
+
+    (0) S' -> programa .
+
+
+state 2
+
+    (1) programa -> PROGRAMA . declaracoes funcoes bloco FIM_PROGRAMA
+    (3) declaracoes -> .
+    (4) declaracoes -> . declaracoes DECLARE tipo : ID
+    DECLARE         reduce using rule 3 (declaracoes -> .)
+    DEF             reduce using rule 3 (declaracoes -> .)
+    FIM_PROGRAMA    reduce using rule 3 (declaracoes -> .)
+    PAR             reduce using rule 3 (declaracoes -> .)
+    RETURN          reduce using rule 3 (declaracoes -> .)
+    SEND            reduce using rule 3 (declaracoes -> .)
+    ESCREVA         reduce using rule 3 (declaracoes -> .)
+    LEIA            reduce using rule 3 (declaracoes -> .)
+    ENQUANTO        reduce using rule 3 (declaracoes -> .)
+    SE              reduce using rule 3 (declaracoes -> .)
+    ID              reduce using rule 3 (declaracoes -> .)
+
+    declaracoes                    shift and go to state 3
+
+state 3
+
+    (1) programa -> PROGRAMA declaracoes . funcoes bloco FIM_PROGRAMA
+    (4) declaracoes -> declaracoes . DECLARE tipo : ID
+    (11) funcoes -> .
+    (12) funcoes -> . funcoes funcao
+    DECLARE         shift and go to state 5
+    DEF             reduce using rule 11 (funcoes -> .)
+    FIM_PROGRAMA    reduce using rule 11 (funcoes -> .)
+    PAR             reduce using rule 11 (funcoes -> .)
+    RETURN          reduce using rule 11 (funcoes -> .)
+    SEND            reduce using rule 11 (funcoes -> .)
+    ESCREVA         reduce using rule 11 (funcoes -> .)
+    LEIA            reduce using rule 11 (funcoes -> .)
+    ENQUANTO        reduce using rule 11 (funcoes -> .)
+    SE              reduce using rule 11 (funcoes -> .)
+    ID              reduce using rule 11 (funcoes -> .)
+
+    funcoes                        shift and go to state 4
+
+state 4
+
+    (1) programa -> PROGRAMA declaracoes funcoes . bloco FIM_PROGRAMA
+    (12) funcoes -> funcoes . funcao
+    (19) bloco -> .
+    (20) bloco -> . bloco comando
+    (13) funcao -> . DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF
+    FIM_PROGRAMA    reduce using rule 19 (bloco -> .)
+    PAR             reduce using rule 19 (bloco -> .)
+    RETURN          reduce using rule 19 (bloco -> .)
+    SEND            reduce using rule 19 (bloco -> .)
+    ESCREVA         reduce using rule 19 (bloco -> .)
+    LEIA            reduce using rule 19 (bloco -> .)
+    ENQUANTO        reduce using rule 19 (bloco -> .)
+    SE              reduce using rule 19 (bloco -> .)
+    ID              reduce using rule 19 (bloco -> .)
+    DEF             shift and go to state 8
+
+    bloco                          shift and go to state 6
+    funcao                         shift and go to state 7
+
+state 5
+
+    (4) declaracoes -> declaracoes DECLARE . tipo : ID
+    (5) tipo -> . REAL
+    (6) tipo -> . VOID
+    (7) tipo -> . C_CHANNEL
+    (8) tipo -> . STRING
+    (9) tipo -> . BOOL
+    (10) tipo -> . INT
+    REAL            shift and go to state 10
+    VOID            shift and go to state 11
+    C_CHANNEL       shift and go to state 12
+    STRING          shift and go to state 13
+    BOOL            shift and go to state 14
+    INT             shift and go to state 15
+
+    tipo                           shift and go to state 9
+
+state 6
+
+    (1) programa -> PROGRAMA declaracoes funcoes bloco . FIM_PROGRAMA
+    (20) bloco -> bloco . comando
+    (21) comando -> . par_bloco
+    (22) comando -> . comando_return
+    (23) comando -> . comando_send
+    (24) comando -> . comando_escreva
+    (25) comando -> . comando_leia
+    (26) comando -> . comando_enquanto
+    (27) comando -> . comando_se
+    (28) comando -> . comando_atribuicao
+    (35) par_bloco -> . PAR bloco FIM_PAR
+    (37) comando_return -> . RETURN
+    (38) comando_return -> . RETURN expr
+    (36) comando_send -> . SEND LPAREN ID COMMA expr RPAREN
+    (34) comando_escreva -> . ESCREVA LPAREN expr RPAREN
+    (33) comando_leia -> . LEIA LPAREN ID RPAREN
+    (32) comando_enquanto -> . ENQUANTO expr FACA bloco FIM_ENQUANTO
+    (30) comando_se -> . SE expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> . SE expr ENTAO bloco FIM_SE
+    (29) comando_atribuicao -> . ID ASSIGN expr
+    FIM_PROGRAMA    shift and go to state 16
+    PAR             shift and go to state 26
+    RETURN          shift and go to state 27
+    SEND            shift and go to state 28
+    ESCREVA         shift and go to state 30
+    LEIA            shift and go to state 31
+    ENQUANTO        shift and go to state 32
+    SE              shift and go to state 33
+    ID              shift and go to state 29
+
+    comando                        shift and go to state 17
+    par_bloco                      shift and go to state 18
+    comando_return                 shift and go to state 19
+    comando_send                   shift and go to state 20
+    comando_escreva                shift and go to state 21
+    comando_leia                   shift and go to state 22
+    comando_enquanto               shift and go to state 23
+    comando_se                     shift and go to state 24
+    comando_atribuicao             shift and go to state 25
+
+state 7
+
+    (12) funcoes -> funcoes funcao .
+    DEF             reduce using rule 12 (funcoes -> funcoes funcao .)
+    FIM_PROGRAMA    reduce using rule 12 (funcoes -> funcoes funcao .)
+    PAR             reduce using rule 12 (funcoes -> funcoes funcao .)
+    RETURN          reduce using rule 12 (funcoes -> funcoes funcao .)
+    SEND            reduce using rule 12 (funcoes -> funcoes funcao .)
+    ESCREVA         reduce using rule 12 (funcoes -> funcoes funcao .)
+    LEIA            reduce using rule 12 (funcoes -> funcoes funcao .)
+    ENQUANTO        reduce using rule 12 (funcoes -> funcoes funcao .)
+    SE              reduce using rule 12 (funcoes -> funcoes funcao .)
+    ID              reduce using rule 12 (funcoes -> funcoes funcao .)
+
+
+state 8
+
+    (13) funcao -> DEF . ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF
+    ID              shift and go to state 34
+
+
+state 9
+
+    (4) declaracoes -> declaracoes DECLARE tipo . : ID
+    :               shift and go to state 35
+
+
+state 10
+
+    (5) tipo -> REAL .
+    :               reduce using rule 5 (tipo -> REAL .)
+    DECLARE         reduce using rule 5 (tipo -> REAL .)
+    FIM_DEF         reduce using rule 5 (tipo -> REAL .)
+    PAR             reduce using rule 5 (tipo -> REAL .)
+    RETURN          reduce using rule 5 (tipo -> REAL .)
+    SEND            reduce using rule 5 (tipo -> REAL .)
+    ESCREVA         reduce using rule 5 (tipo -> REAL .)
+    LEIA            reduce using rule 5 (tipo -> REAL .)
+    ENQUANTO        reduce using rule 5 (tipo -> REAL .)
+    SE              reduce using rule 5 (tipo -> REAL .)
+    ID              reduce using rule 5 (tipo -> REAL .)
+
+
+state 11
+
+    (6) tipo -> VOID .
+    :               reduce using rule 6 (tipo -> VOID .)
+    DECLARE         reduce using rule 6 (tipo -> VOID .)
+    FIM_DEF         reduce using rule 6 (tipo -> VOID .)
+    PAR             reduce using rule 6 (tipo -> VOID .)
+    RETURN          reduce using rule 6 (tipo -> VOID .)
+    SEND            reduce using rule 6 (tipo -> VOID .)
+    ESCREVA         reduce using rule 6 (tipo -> VOID .)
+    LEIA            reduce using rule 6 (tipo -> VOID .)
+    ENQUANTO        reduce using rule 6 (tipo -> VOID .)
+    SE              reduce using rule 6 (tipo -> VOID .)
+    ID              reduce using rule 6 (tipo -> VOID .)
+
+
+state 12
+
+    (7) tipo -> C_CHANNEL .
+    :               reduce using rule 7 (tipo -> C_CHANNEL .)
+    DECLARE         reduce using rule 7 (tipo -> C_CHANNEL .)
+    FIM_DEF         reduce using rule 7 (tipo -> C_CHANNEL .)
+    PAR             reduce using rule 7 (tipo -> C_CHANNEL .)
+    RETURN          reduce using rule 7 (tipo -> C_CHANNEL .)
+    SEND            reduce using rule 7 (tipo -> C_CHANNEL .)
+    ESCREVA         reduce using rule 7 (tipo -> C_CHANNEL .)
+    LEIA            reduce using rule 7 (tipo -> C_CHANNEL .)
+    ENQUANTO        reduce using rule 7 (tipo -> C_CHANNEL .)
+    SE              reduce using rule 7 (tipo -> C_CHANNEL .)
+    ID              reduce using rule 7 (tipo -> C_CHANNEL .)
+
+
+state 13
+
+    (8) tipo -> STRING .
+    :               reduce using rule 8 (tipo -> STRING .)
+    DECLARE         reduce using rule 8 (tipo -> STRING .)
+    FIM_DEF         reduce using rule 8 (tipo -> STRING .)
+    PAR             reduce using rule 8 (tipo -> STRING .)
+    RETURN          reduce using rule 8 (tipo -> STRING .)
+    SEND            reduce using rule 8 (tipo -> STRING .)
+    ESCREVA         reduce using rule 8 (tipo -> STRING .)
+    LEIA            reduce using rule 8 (tipo -> STRING .)
+    ENQUANTO        reduce using rule 8 (tipo -> STRING .)
+    SE              reduce using rule 8 (tipo -> STRING .)
+    ID              reduce using rule 8 (tipo -> STRING .)
+
+
+state 14
+
+    (9) tipo -> BOOL .
+    :               reduce using rule 9 (tipo -> BOOL .)
+    DECLARE         reduce using rule 9 (tipo -> BOOL .)
+    FIM_DEF         reduce using rule 9 (tipo -> BOOL .)
+    PAR             reduce using rule 9 (tipo -> BOOL .)
+    RETURN          reduce using rule 9 (tipo -> BOOL .)
+    SEND            reduce using rule 9 (tipo -> BOOL .)
+    ESCREVA         reduce using rule 9 (tipo -> BOOL .)
+    LEIA            reduce using rule 9 (tipo -> BOOL .)
+    ENQUANTO        reduce using rule 9 (tipo -> BOOL .)
+    SE              reduce using rule 9 (tipo -> BOOL .)
+    ID              reduce using rule 9 (tipo -> BOOL .)
+
+
+state 15
+
+    (10) tipo -> INT .
+    :               reduce using rule 10 (tipo -> INT .)
+    DECLARE         reduce using rule 10 (tipo -> INT .)
+    FIM_DEF         reduce using rule 10 (tipo -> INT .)
+    PAR             reduce using rule 10 (tipo -> INT .)
+    RETURN          reduce using rule 10 (tipo -> INT .)
+    SEND            reduce using rule 10 (tipo -> INT .)
+    ESCREVA         reduce using rule 10 (tipo -> INT .)
+    LEIA            reduce using rule 10 (tipo -> INT .)
+    ENQUANTO        reduce using rule 10 (tipo -> INT .)
+    SE              reduce using rule 10 (tipo -> INT .)
+    ID              reduce using rule 10 (tipo -> INT .)
+
+
+state 16
+
+    (1) programa -> PROGRAMA declaracoes funcoes bloco FIM_PROGRAMA .
+    $end            reduce using rule 1 (programa -> PROGRAMA declaracoes funcoes bloco FIM_PROGRAMA .)
+
+
+state 17
+
+    (20) bloco -> bloco comando .
+    FIM_PROGRAMA    reduce using rule 20 (bloco -> bloco comando .)
+    PAR             reduce using rule 20 (bloco -> bloco comando .)
+    RETURN          reduce using rule 20 (bloco -> bloco comando .)
+    SEND            reduce using rule 20 (bloco -> bloco comando .)
+    ESCREVA         reduce using rule 20 (bloco -> bloco comando .)
+    LEIA            reduce using rule 20 (bloco -> bloco comando .)
+    ENQUANTO        reduce using rule 20 (bloco -> bloco comando .)
+    SE              reduce using rule 20 (bloco -> bloco comando .)
+    ID              reduce using rule 20 (bloco -> bloco comando .)
+    FIM_PAR         reduce using rule 20 (bloco -> bloco comando .)
+    FIM_ENQUANTO    reduce using rule 20 (bloco -> bloco comando .)
+    SENAO           reduce using rule 20 (bloco -> bloco comando .)
+    FIM_SE          reduce using rule 20 (bloco -> bloco comando .)
+    FIM_DEF         reduce using rule 20 (bloco -> bloco comando .)
+
+
+state 18
+
+    (21) comando -> par_bloco .
+    FIM_PROGRAMA    reduce using rule 21 (comando -> par_bloco .)
+    PAR             reduce using rule 21 (comando -> par_bloco .)
+    RETURN          reduce using rule 21 (comando -> par_bloco .)
+    SEND            reduce using rule 21 (comando -> par_bloco .)
+    ESCREVA         reduce using rule 21 (comando -> par_bloco .)
+    LEIA            reduce using rule 21 (comando -> par_bloco .)
+    ENQUANTO        reduce using rule 21 (comando -> par_bloco .)
+    SE              reduce using rule 21 (comando -> par_bloco .)
+    ID              reduce using rule 21 (comando -> par_bloco .)
+    FIM_PAR         reduce using rule 21 (comando -> par_bloco .)
+    FIM_ENQUANTO    reduce using rule 21 (comando -> par_bloco .)
+    SENAO           reduce using rule 21 (comando -> par_bloco .)
+    FIM_SE          reduce using rule 21 (comando -> par_bloco .)
+    FIM_DEF         reduce using rule 21 (comando -> par_bloco .)
+
+
+state 19
+
+    (22) comando -> comando_return .
+    FIM_PROGRAMA    reduce using rule 22 (comando -> comando_return .)
+    PAR             reduce using rule 22 (comando -> comando_return .)
+    RETURN          reduce using rule 22 (comando -> comando_return .)
+    SEND            reduce using rule 22 (comando -> comando_return .)
+    ESCREVA         reduce using rule 22 (comando -> comando_return .)
+    LEIA            reduce using rule 22 (comando -> comando_return .)
+    ENQUANTO        reduce using rule 22 (comando -> comando_return .)
+    SE              reduce using rule 22 (comando -> comando_return .)
+    ID              reduce using rule 22 (comando -> comando_return .)
+    FIM_PAR         reduce using rule 22 (comando -> comando_return .)
+    FIM_ENQUANTO    reduce using rule 22 (comando -> comando_return .)
+    SENAO           reduce using rule 22 (comando -> comando_return .)
+    FIM_SE          reduce using rule 22 (comando -> comando_return .)
+    FIM_DEF         reduce using rule 22 (comando -> comando_return .)
+
+
+state 20
+
+    (23) comando -> comando_send .
+    FIM_PROGRAMA    reduce using rule 23 (comando -> comando_send .)
+    PAR             reduce using rule 23 (comando -> comando_send .)
+    RETURN          reduce using rule 23 (comando -> comando_send .)
+    SEND            reduce using rule 23 (comando -> comando_send .)
+    ESCREVA         reduce using rule 23 (comando -> comando_send .)
+    LEIA            reduce using rule 23 (comando -> comando_send .)
+    ENQUANTO        reduce using rule 23 (comando -> comando_send .)
+    SE              reduce using rule 23 (comando -> comando_send .)
+    ID              reduce using rule 23 (comando -> comando_send .)
+    FIM_PAR         reduce using rule 23 (comando -> comando_send .)
+    FIM_ENQUANTO    reduce using rule 23 (comando -> comando_send .)
+    SENAO           reduce using rule 23 (comando -> comando_send .)
+    FIM_SE          reduce using rule 23 (comando -> comando_send .)
+    FIM_DEF         reduce using rule 23 (comando -> comando_send .)
+
+
+state 21
+
+    (24) comando -> comando_escreva .
+    FIM_PROGRAMA    reduce using rule 24 (comando -> comando_escreva .)
+    PAR             reduce using rule 24 (comando -> comando_escreva .)
+    RETURN          reduce using rule 24 (comando -> comando_escreva .)
+    SEND            reduce using rule 24 (comando -> comando_escreva .)
+    ESCREVA         reduce using rule 24 (comando -> comando_escreva .)
+    LEIA            reduce using rule 24 (comando -> comando_escreva .)
+    ENQUANTO        reduce using rule 24 (comando -> comando_escreva .)
+    SE              reduce using rule 24 (comando -> comando_escreva .)
+    ID              reduce using rule 24 (comando -> comando_escreva .)
+    FIM_PAR         reduce using rule 24 (comando -> comando_escreva .)
+    FIM_ENQUANTO    reduce using rule 24 (comando -> comando_escreva .)
+    SENAO           reduce using rule 24 (comando -> comando_escreva .)
+    FIM_SE          reduce using rule 24 (comando -> comando_escreva .)
+    FIM_DEF         reduce using rule 24 (comando -> comando_escreva .)
+
+
+state 22
+
+    (25) comando -> comando_leia .
+    FIM_PROGRAMA    reduce using rule 25 (comando -> comando_leia .)
+    PAR             reduce using rule 25 (comando -> comando_leia .)
+    RETURN          reduce using rule 25 (comando -> comando_leia .)
+    SEND            reduce using rule 25 (comando -> comando_leia .)
+    ESCREVA         reduce using rule 25 (comando -> comando_leia .)
+    LEIA            reduce using rule 25 (comando -> comando_leia .)
+    ENQUANTO        reduce using rule 25 (comando -> comando_leia .)
+    SE              reduce using rule 25 (comando -> comando_leia .)
+    ID              reduce using rule 25 (comando -> comando_leia .)
+    FIM_PAR         reduce using rule 25 (comando -> comando_leia .)
+    FIM_ENQUANTO    reduce using rule 25 (comando -> comando_leia .)
+    SENAO           reduce using rule 25 (comando -> comando_leia .)
+    FIM_SE          reduce using rule 25 (comando -> comando_leia .)
+    FIM_DEF         reduce using rule 25 (comando -> comando_leia .)
+
+
+state 23
+
+    (26) comando -> comando_enquanto .
+    FIM_PROGRAMA    reduce using rule 26 (comando -> comando_enquanto .)
+    PAR             reduce using rule 26 (comando -> comando_enquanto .)
+    RETURN          reduce using rule 26 (comando -> comando_enquanto .)
+    SEND            reduce using rule 26 (comando -> comando_enquanto .)
+    ESCREVA         reduce using rule 26 (comando -> comando_enquanto .)
+    LEIA            reduce using rule 26 (comando -> comando_enquanto .)
+    ENQUANTO        reduce using rule 26 (comando -> comando_enquanto .)
+    SE              reduce using rule 26 (comando -> comando_enquanto .)
+    ID              reduce using rule 26 (comando -> comando_enquanto .)
+    FIM_PAR         reduce using rule 26 (comando -> comando_enquanto .)
+    FIM_ENQUANTO    reduce using rule 26 (comando -> comando_enquanto .)
+    SENAO           reduce using rule 26 (comando -> comando_enquanto .)
+    FIM_SE          reduce using rule 26 (comando -> comando_enquanto .)
+    FIM_DEF         reduce using rule 26 (comando -> comando_enquanto .)
+
+
+state 24
+
+    (27) comando -> comando_se .
+    FIM_PROGRAMA    reduce using rule 27 (comando -> comando_se .)
+    PAR             reduce using rule 27 (comando -> comando_se .)
+    RETURN          reduce using rule 27 (comando -> comando_se .)
+    SEND            reduce using rule 27 (comando -> comando_se .)
+    ESCREVA         reduce using rule 27 (comando -> comando_se .)
+    LEIA            reduce using rule 27 (comando -> comando_se .)
+    ENQUANTO        reduce using rule 27 (comando -> comando_se .)
+    SE              reduce using rule 27 (comando -> comando_se .)
+    ID              reduce using rule 27 (comando -> comando_se .)
+    FIM_PAR         reduce using rule 27 (comando -> comando_se .)
+    FIM_ENQUANTO    reduce using rule 27 (comando -> comando_se .)
+    SENAO           reduce using rule 27 (comando -> comando_se .)
+    FIM_SE          reduce using rule 27 (comando -> comando_se .)
+    FIM_DEF         reduce using rule 27 (comando -> comando_se .)
+
+
+state 25
+
+    (28) comando -> comando_atribuicao .
+    FIM_PROGRAMA    reduce using rule 28 (comando -> comando_atribuicao .)
+    PAR             reduce using rule 28 (comando -> comando_atribuicao .)
+    RETURN          reduce using rule 28 (comando -> comando_atribuicao .)
+    SEND            reduce using rule 28 (comando -> comando_atribuicao .)
+    ESCREVA         reduce using rule 28 (comando -> comando_atribuicao .)
+    LEIA            reduce using rule 28 (comando -> comando_atribuicao .)
+    ENQUANTO        reduce using rule 28 (comando -> comando_atribuicao .)
+    SE              reduce using rule 28 (comando -> comando_atribuicao .)
+    ID              reduce using rule 28 (comando -> comando_atribuicao .)
+    FIM_PAR         reduce using rule 28 (comando -> comando_atribuicao .)
+    FIM_ENQUANTO    reduce using rule 28 (comando -> comando_atribuicao .)
+    SENAO           reduce using rule 28 (comando -> comando_atribuicao .)
+    FIM_SE          reduce using rule 28 (comando -> comando_atribuicao .)
+    FIM_DEF         reduce using rule 28 (comando -> comando_atribuicao .)
+
+
+state 26
+
+    (35) par_bloco -> PAR . bloco FIM_PAR
+    (19) bloco -> .
+    (20) bloco -> . bloco comando
+    FIM_PAR         reduce using rule 19 (bloco -> .)
+    PAR             reduce using rule 19 (bloco -> .)
+    RETURN          reduce using rule 19 (bloco -> .)
+    SEND            reduce using rule 19 (bloco -> .)
+    ESCREVA         reduce using rule 19 (bloco -> .)
+    LEIA            reduce using rule 19 (bloco -> .)
+    ENQUANTO        reduce using rule 19 (bloco -> .)
+    SE              reduce using rule 19 (bloco -> .)
+    ID              reduce using rule 19 (bloco -> .)
+
+    bloco                          shift and go to state 36
+
+state 27
+
+    (37) comando_return -> RETURN .
+    (38) comando_return -> RETURN . expr
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+  ! shift/reduce conflict for ID resolved as shift
+    FIM_PROGRAMA    reduce using rule 37 (comando_return -> RETURN .)
+    PAR             reduce using rule 37 (comando_return -> RETURN .)
+    RETURN          reduce using rule 37 (comando_return -> RETURN .)
+    SEND            reduce using rule 37 (comando_return -> RETURN .)
+    ESCREVA         reduce using rule 37 (comando_return -> RETURN .)
+    LEIA            reduce using rule 37 (comando_return -> RETURN .)
+    ENQUANTO        reduce using rule 37 (comando_return -> RETURN .)
+    SE              reduce using rule 37 (comando_return -> RETURN .)
+    FIM_PAR         reduce using rule 37 (comando_return -> RETURN .)
+    FIM_ENQUANTO    reduce using rule 37 (comando_return -> RETURN .)
+    SENAO           reduce using rule 37 (comando_return -> RETURN .)
+    FIM_SE          reduce using rule 37 (comando_return -> RETURN .)
+    FIM_DEF         reduce using rule 37 (comando_return -> RETURN .)
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 37
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 28
+
+    (36) comando_send -> SEND . LPAREN ID COMMA expr RPAREN
+    LPAREN          shift and go to state 49
+
+
+state 29
+
+    (29) comando_atribuicao -> ID . ASSIGN expr
+    ASSIGN          shift and go to state 50
+
+
+state 30
+
+    (34) comando_escreva -> ESCREVA . LPAREN expr RPAREN
+    LPAREN          shift and go to state 51
+
+
+state 31
+
+    (33) comando_leia -> LEIA . LPAREN ID RPAREN
+    LPAREN          shift and go to state 52
+
+
+state 32
+
+    (32) comando_enquanto -> ENQUANTO . expr FACA bloco FIM_ENQUANTO
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 53
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 33
+
+    (30) comando_se -> SE . expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> SE . expr ENTAO bloco FIM_SE
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 54
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 34
+
+    (13) funcao -> DEF ID . LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF
+    LPAREN          shift and go to state 55
+
+
+state 35
+
+    (4) declaracoes -> declaracoes DECLARE tipo : . ID
+    ID              shift and go to state 56
+
+
+state 36
+
+    (35) par_bloco -> PAR bloco . FIM_PAR
+    (20) bloco -> bloco . comando
+    (21) comando -> . par_bloco
+    (22) comando -> . comando_return
+    (23) comando -> . comando_send
+    (24) comando -> . comando_escreva
+    (25) comando -> . comando_leia
+    (26) comando -> . comando_enquanto
+    (27) comando -> . comando_se
+    (28) comando -> . comando_atribuicao
+    (35) par_bloco -> . PAR bloco FIM_PAR
+    (37) comando_return -> . RETURN
+    (38) comando_return -> . RETURN expr
+    (36) comando_send -> . SEND LPAREN ID COMMA expr RPAREN
+    (34) comando_escreva -> . ESCREVA LPAREN expr RPAREN
+    (33) comando_leia -> . LEIA LPAREN ID RPAREN
+    (32) comando_enquanto -> . ENQUANTO expr FACA bloco FIM_ENQUANTO
+    (30) comando_se -> . SE expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> . SE expr ENTAO bloco FIM_SE
+    (29) comando_atribuicao -> . ID ASSIGN expr
+    FIM_PAR         shift and go to state 57
+    PAR             shift and go to state 26
+    RETURN          shift and go to state 27
+    SEND            shift and go to state 28
+    ESCREVA         shift and go to state 30
+    LEIA            shift and go to state 31
+    ENQUANTO        shift and go to state 32
+    SE              shift and go to state 33
+    ID              shift and go to state 29
+
+    comando                        shift and go to state 17
+    par_bloco                      shift and go to state 18
+    comando_return                 shift and go to state 19
+    comando_send                   shift and go to state 20
+    comando_escreva                shift and go to state 21
+    comando_leia                   shift and go to state 22
+    comando_enquanto               shift and go to state 23
+    comando_se                     shift and go to state 24
+    comando_atribuicao             shift and go to state 25
+
+state 37
+
+    (38) comando_return -> RETURN expr .
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    FIM_PROGRAMA    reduce using rule 38 (comando_return -> RETURN expr .)
+    PAR             reduce using rule 38 (comando_return -> RETURN expr .)
+    RETURN          reduce using rule 38 (comando_return -> RETURN expr .)
+    SEND            reduce using rule 38 (comando_return -> RETURN expr .)
+    ESCREVA         reduce using rule 38 (comando_return -> RETURN expr .)
+    LEIA            reduce using rule 38 (comando_return -> RETURN expr .)
+    ENQUANTO        reduce using rule 38 (comando_return -> RETURN expr .)
+    SE              reduce using rule 38 (comando_return -> RETURN expr .)
+    ID              reduce using rule 38 (comando_return -> RETURN expr .)
+    FIM_PAR         reduce using rule 38 (comando_return -> RETURN expr .)
+    FIM_ENQUANTO    reduce using rule 38 (comando_return -> RETURN expr .)
+    SENAO           reduce using rule 38 (comando_return -> RETURN expr .)
+    FIM_SE          reduce using rule 38 (comando_return -> RETURN expr .)
+    FIM_DEF         reduce using rule 38 (comando_return -> RETURN expr .)
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 38
+
+    (39) expr -> fator_expr . GE fator_expr
+    (40) expr -> fator_expr . GT fator_expr
+    (41) expr -> fator_expr . LE fator_expr
+    (42) expr -> fator_expr . LT fator_expr
+    (43) expr -> fator_expr . NE fator_expr
+    (44) expr -> fator_expr . EQ fator_expr
+    GE              shift and go to state 60
+    GT              shift and go to state 61
+    LE              shift and go to state 62
+    LT              shift and go to state 63
+    NE              shift and go to state 64
+    EQ              shift and go to state 65
+
+
+state 39
+
+    (45) expr -> termo .
+    (49) termo -> termo . DIVIDE fator
+    (50) termo -> termo . VEZES fator
+    MENOS           reduce using rule 45 (expr -> termo .)
+    MAIS            reduce using rule 45 (expr -> termo .)
+    FIM_PROGRAMA    reduce using rule 45 (expr -> termo .)
+    PAR             reduce using rule 45 (expr -> termo .)
+    RETURN          reduce using rule 45 (expr -> termo .)
+    SEND            reduce using rule 45 (expr -> termo .)
+    ESCREVA         reduce using rule 45 (expr -> termo .)
+    LEIA            reduce using rule 45 (expr -> termo .)
+    ENQUANTO        reduce using rule 45 (expr -> termo .)
+    SE              reduce using rule 45 (expr -> termo .)
+    ID              reduce using rule 45 (expr -> termo .)
+    FIM_PAR         reduce using rule 45 (expr -> termo .)
+    FIM_ENQUANTO    reduce using rule 45 (expr -> termo .)
+    SENAO           reduce using rule 45 (expr -> termo .)
+    FIM_SE          reduce using rule 45 (expr -> termo .)
+    FIM_DEF         reduce using rule 45 (expr -> termo .)
+    FACA            reduce using rule 45 (expr -> termo .)
+    ENTAO           reduce using rule 45 (expr -> termo .)
+    RPAREN          reduce using rule 45 (expr -> termo .)
+    COMMA           reduce using rule 45 (expr -> termo .)
+    DIVIDE          shift and go to state 66
+    VEZES           shift and go to state 67
+
+
+state 40
+
+    (51) fator_expr -> fator .
+    (48) termo -> fator .
+    GE              reduce using rule 51 (fator_expr -> fator .)
+    GT              reduce using rule 51 (fator_expr -> fator .)
+    LE              reduce using rule 51 (fator_expr -> fator .)
+    LT              reduce using rule 51 (fator_expr -> fator .)
+    NE              reduce using rule 51 (fator_expr -> fator .)
+    EQ              reduce using rule 51 (fator_expr -> fator .)
+    DIVIDE          reduce using rule 48 (termo -> fator .)
+    VEZES           reduce using rule 48 (termo -> fator .)
+    MENOS           reduce using rule 48 (termo -> fator .)
+    MAIS            reduce using rule 48 (termo -> fator .)
+    FIM_PROGRAMA    reduce using rule 48 (termo -> fator .)
+    PAR             reduce using rule 48 (termo -> fator .)
+    RETURN          reduce using rule 48 (termo -> fator .)
+    SEND            reduce using rule 48 (termo -> fator .)
+    ESCREVA         reduce using rule 48 (termo -> fator .)
+    LEIA            reduce using rule 48 (termo -> fator .)
+    ENQUANTO        reduce using rule 48 (termo -> fator .)
+    SE              reduce using rule 48 (termo -> fator .)
+    ID              reduce using rule 48 (termo -> fator .)
+    FIM_PAR         reduce using rule 48 (termo -> fator .)
+    FIM_ENQUANTO    reduce using rule 48 (termo -> fator .)
+    SENAO           reduce using rule 48 (termo -> fator .)
+    FIM_SE          reduce using rule 48 (termo -> fator .)
+    FIM_DEF         reduce using rule 48 (termo -> fator .)
+    FACA            reduce using rule 48 (termo -> fator .)
+    ENTAO           reduce using rule 48 (termo -> fator .)
+    RPAREN          reduce using rule 48 (termo -> fator .)
+    COMMA           reduce using rule 48 (termo -> fator .)
+
+
+state 41
+
+    (52) fator -> receive_expr .
+    GE              reduce using rule 52 (fator -> receive_expr .)
+    GT              reduce using rule 52 (fator -> receive_expr .)
+    LE              reduce using rule 52 (fator -> receive_expr .)
+    LT              reduce using rule 52 (fator -> receive_expr .)
+    NE              reduce using rule 52 (fator -> receive_expr .)
+    EQ              reduce using rule 52 (fator -> receive_expr .)
+    DIVIDE          reduce using rule 52 (fator -> receive_expr .)
+    VEZES           reduce using rule 52 (fator -> receive_expr .)
+    MENOS           reduce using rule 52 (fator -> receive_expr .)
+    MAIS            reduce using rule 52 (fator -> receive_expr .)
+    FIM_PROGRAMA    reduce using rule 52 (fator -> receive_expr .)
+    PAR             reduce using rule 52 (fator -> receive_expr .)
+    RETURN          reduce using rule 52 (fator -> receive_expr .)
+    SEND            reduce using rule 52 (fator -> receive_expr .)
+    ESCREVA         reduce using rule 52 (fator -> receive_expr .)
+    LEIA            reduce using rule 52 (fator -> receive_expr .)
+    ENQUANTO        reduce using rule 52 (fator -> receive_expr .)
+    SE              reduce using rule 52 (fator -> receive_expr .)
+    ID              reduce using rule 52 (fator -> receive_expr .)
+    FIM_PAR         reduce using rule 52 (fator -> receive_expr .)
+    FIM_ENQUANTO    reduce using rule 52 (fator -> receive_expr .)
+    SENAO           reduce using rule 52 (fator -> receive_expr .)
+    FIM_SE          reduce using rule 52 (fator -> receive_expr .)
+    FIM_DEF         reduce using rule 52 (fator -> receive_expr .)
+    FACA            reduce using rule 52 (fator -> receive_expr .)
+    ENTAO           reduce using rule 52 (fator -> receive_expr .)
+    RPAREN          reduce using rule 52 (fator -> receive_expr .)
+    COMMA           reduce using rule 52 (fator -> receive_expr .)
+
+
+state 42
+
+    (53) fator -> call .
+    GE              reduce using rule 53 (fator -> call .)
+    GT              reduce using rule 53 (fator -> call .)
+    LE              reduce using rule 53 (fator -> call .)
+    LT              reduce using rule 53 (fator -> call .)
+    NE              reduce using rule 53 (fator -> call .)
+    EQ              reduce using rule 53 (fator -> call .)
+    DIVIDE          reduce using rule 53 (fator -> call .)
+    VEZES           reduce using rule 53 (fator -> call .)
+    MENOS           reduce using rule 53 (fator -> call .)
+    MAIS            reduce using rule 53 (fator -> call .)
+    FIM_PROGRAMA    reduce using rule 53 (fator -> call .)
+    PAR             reduce using rule 53 (fator -> call .)
+    RETURN          reduce using rule 53 (fator -> call .)
+    SEND            reduce using rule 53 (fator -> call .)
+    ESCREVA         reduce using rule 53 (fator -> call .)
+    LEIA            reduce using rule 53 (fator -> call .)
+    ENQUANTO        reduce using rule 53 (fator -> call .)
+    SE              reduce using rule 53 (fator -> call .)
+    ID              reduce using rule 53 (fator -> call .)
+    FIM_PAR         reduce using rule 53 (fator -> call .)
+    FIM_ENQUANTO    reduce using rule 53 (fator -> call .)
+    SENAO           reduce using rule 53 (fator -> call .)
+    FIM_SE          reduce using rule 53 (fator -> call .)
+    FIM_DEF         reduce using rule 53 (fator -> call .)
+    FACA            reduce using rule 53 (fator -> call .)
+    ENTAO           reduce using rule 53 (fator -> call .)
+    RPAREN          reduce using rule 53 (fator -> call .)
+    COMMA           reduce using rule 53 (fator -> call .)
+
+
+state 43
+
+    (54) fator -> LPAREN . expr RPAREN
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 68
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 44
+
+    (55) fator -> ID .
+    (59) call -> ID . LPAREN args RPAREN
+    GE              reduce using rule 55 (fator -> ID .)
+    GT              reduce using rule 55 (fator -> ID .)
+    LE              reduce using rule 55 (fator -> ID .)
+    LT              reduce using rule 55 (fator -> ID .)
+    NE              reduce using rule 55 (fator -> ID .)
+    EQ              reduce using rule 55 (fator -> ID .)
+    DIVIDE          reduce using rule 55 (fator -> ID .)
+    VEZES           reduce using rule 55 (fator -> ID .)
+    MENOS           reduce using rule 55 (fator -> ID .)
+    MAIS            reduce using rule 55 (fator -> ID .)
+    FIM_PROGRAMA    reduce using rule 55 (fator -> ID .)
+    PAR             reduce using rule 55 (fator -> ID .)
+    RETURN          reduce using rule 55 (fator -> ID .)
+    SEND            reduce using rule 55 (fator -> ID .)
+    ESCREVA         reduce using rule 55 (fator -> ID .)
+    LEIA            reduce using rule 55 (fator -> ID .)
+    ENQUANTO        reduce using rule 55 (fator -> ID .)
+    SE              reduce using rule 55 (fator -> ID .)
+    ID              reduce using rule 55 (fator -> ID .)
+    FIM_PAR         reduce using rule 55 (fator -> ID .)
+    FIM_ENQUANTO    reduce using rule 55 (fator -> ID .)
+    SENAO           reduce using rule 55 (fator -> ID .)
+    FIM_SE          reduce using rule 55 (fator -> ID .)
+    FIM_DEF         reduce using rule 55 (fator -> ID .)
+    FACA            reduce using rule 55 (fator -> ID .)
+    ENTAO           reduce using rule 55 (fator -> ID .)
+    RPAREN          reduce using rule 55 (fator -> ID .)
+    COMMA           reduce using rule 55 (fator -> ID .)
+    LPAREN          shift and go to state 69
+
+
+state 45
+
+    (56) fator -> STRING_LITERAL .
+    GE              reduce using rule 56 (fator -> STRING_LITERAL .)
+    GT              reduce using rule 56 (fator -> STRING_LITERAL .)
+    LE              reduce using rule 56 (fator -> STRING_LITERAL .)
+    LT              reduce using rule 56 (fator -> STRING_LITERAL .)
+    NE              reduce using rule 56 (fator -> STRING_LITERAL .)
+    EQ              reduce using rule 56 (fator -> STRING_LITERAL .)
+    DIVIDE          reduce using rule 56 (fator -> STRING_LITERAL .)
+    VEZES           reduce using rule 56 (fator -> STRING_LITERAL .)
+    MENOS           reduce using rule 56 (fator -> STRING_LITERAL .)
+    MAIS            reduce using rule 56 (fator -> STRING_LITERAL .)
+    FIM_PROGRAMA    reduce using rule 56 (fator -> STRING_LITERAL .)
+    PAR             reduce using rule 56 (fator -> STRING_LITERAL .)
+    RETURN          reduce using rule 56 (fator -> STRING_LITERAL .)
+    SEND            reduce using rule 56 (fator -> STRING_LITERAL .)
+    ESCREVA         reduce using rule 56 (fator -> STRING_LITERAL .)
+    LEIA            reduce using rule 56 (fator -> STRING_LITERAL .)
+    ENQUANTO        reduce using rule 56 (fator -> STRING_LITERAL .)
+    SE              reduce using rule 56 (fator -> STRING_LITERAL .)
+    ID              reduce using rule 56 (fator -> STRING_LITERAL .)
+    FIM_PAR         reduce using rule 56 (fator -> STRING_LITERAL .)
+    FIM_ENQUANTO    reduce using rule 56 (fator -> STRING_LITERAL .)
+    SENAO           reduce using rule 56 (fator -> STRING_LITERAL .)
+    FIM_SE          reduce using rule 56 (fator -> STRING_LITERAL .)
+    FIM_DEF         reduce using rule 56 (fator -> STRING_LITERAL .)
+    FACA            reduce using rule 56 (fator -> STRING_LITERAL .)
+    ENTAO           reduce using rule 56 (fator -> STRING_LITERAL .)
+    RPAREN          reduce using rule 56 (fator -> STRING_LITERAL .)
+    COMMA           reduce using rule 56 (fator -> STRING_LITERAL .)
+
+
+state 46
+
+    (57) fator -> NUMERO_REAL .
+    GE              reduce using rule 57 (fator -> NUMERO_REAL .)
+    GT              reduce using rule 57 (fator -> NUMERO_REAL .)
+    LE              reduce using rule 57 (fator -> NUMERO_REAL .)
+    LT              reduce using rule 57 (fator -> NUMERO_REAL .)
+    NE              reduce using rule 57 (fator -> NUMERO_REAL .)
+    EQ              reduce using rule 57 (fator -> NUMERO_REAL .)
+    DIVIDE          reduce using rule 57 (fator -> NUMERO_REAL .)
+    VEZES           reduce using rule 57 (fator -> NUMERO_REAL .)
+    MENOS           reduce using rule 57 (fator -> NUMERO_REAL .)
+    MAIS            reduce using rule 57 (fator -> NUMERO_REAL .)
+    FIM_PROGRAMA    reduce using rule 57 (fator -> NUMERO_REAL .)
+    PAR             reduce using rule 57 (fator -> NUMERO_REAL .)
+    RETURN          reduce using rule 57 (fator -> NUMERO_REAL .)
+    SEND            reduce using rule 57 (fator -> NUMERO_REAL .)
+    ESCREVA         reduce using rule 57 (fator -> NUMERO_REAL .)
+    LEIA            reduce using rule 57 (fator -> NUMERO_REAL .)
+    ENQUANTO        reduce using rule 57 (fator -> NUMERO_REAL .)
+    SE              reduce using rule 57 (fator -> NUMERO_REAL .)
+    ID              reduce using rule 57 (fator -> NUMERO_REAL .)
+    FIM_PAR         reduce using rule 57 (fator -> NUMERO_REAL .)
+    FIM_ENQUANTO    reduce using rule 57 (fator -> NUMERO_REAL .)
+    SENAO           reduce using rule 57 (fator -> NUMERO_REAL .)
+    FIM_SE          reduce using rule 57 (fator -> NUMERO_REAL .)
+    FIM_DEF         reduce using rule 57 (fator -> NUMERO_REAL .)
+    FACA            reduce using rule 57 (fator -> NUMERO_REAL .)
+    ENTAO           reduce using rule 57 (fator -> NUMERO_REAL .)
+    RPAREN          reduce using rule 57 (fator -> NUMERO_REAL .)
+    COMMA           reduce using rule 57 (fator -> NUMERO_REAL .)
+
+
+state 47
+
+    (58) fator -> NUMERO_INT .
+    GE              reduce using rule 58 (fator -> NUMERO_INT .)
+    GT              reduce using rule 58 (fator -> NUMERO_INT .)
+    LE              reduce using rule 58 (fator -> NUMERO_INT .)
+    LT              reduce using rule 58 (fator -> NUMERO_INT .)
+    NE              reduce using rule 58 (fator -> NUMERO_INT .)
+    EQ              reduce using rule 58 (fator -> NUMERO_INT .)
+    DIVIDE          reduce using rule 58 (fator -> NUMERO_INT .)
+    VEZES           reduce using rule 58 (fator -> NUMERO_INT .)
+    MENOS           reduce using rule 58 (fator -> NUMERO_INT .)
+    MAIS            reduce using rule 58 (fator -> NUMERO_INT .)
+    FIM_PROGRAMA    reduce using rule 58 (fator -> NUMERO_INT .)
+    PAR             reduce using rule 58 (fator -> NUMERO_INT .)
+    RETURN          reduce using rule 58 (fator -> NUMERO_INT .)
+    SEND            reduce using rule 58 (fator -> NUMERO_INT .)
+    ESCREVA         reduce using rule 58 (fator -> NUMERO_INT .)
+    LEIA            reduce using rule 58 (fator -> NUMERO_INT .)
+    ENQUANTO        reduce using rule 58 (fator -> NUMERO_INT .)
+    SE              reduce using rule 58 (fator -> NUMERO_INT .)
+    ID              reduce using rule 58 (fator -> NUMERO_INT .)
+    FIM_PAR         reduce using rule 58 (fator -> NUMERO_INT .)
+    FIM_ENQUANTO    reduce using rule 58 (fator -> NUMERO_INT .)
+    SENAO           reduce using rule 58 (fator -> NUMERO_INT .)
+    FIM_SE          reduce using rule 58 (fator -> NUMERO_INT .)
+    FIM_DEF         reduce using rule 58 (fator -> NUMERO_INT .)
+    FACA            reduce using rule 58 (fator -> NUMERO_INT .)
+    ENTAO           reduce using rule 58 (fator -> NUMERO_INT .)
+    RPAREN          reduce using rule 58 (fator -> NUMERO_INT .)
+    COMMA           reduce using rule 58 (fator -> NUMERO_INT .)
+
+
+state 48
+
+    (60) receive_expr -> RECEIVE . LPAREN ID RPAREN
+    LPAREN          shift and go to state 70
+
+
+state 49
+
+    (36) comando_send -> SEND LPAREN . ID COMMA expr RPAREN
+    ID              shift and go to state 71
+
+
+state 50
+
+    (29) comando_atribuicao -> ID ASSIGN . expr
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 72
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 51
+
+    (34) comando_escreva -> ESCREVA LPAREN . expr RPAREN
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 73
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 52
+
+    (33) comando_leia -> LEIA LPAREN . ID RPAREN
+    ID              shift and go to state 74
+
+
+state 53
+
+    (32) comando_enquanto -> ENQUANTO expr . FACA bloco FIM_ENQUANTO
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    FACA            shift and go to state 75
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 54
+
+    (30) comando_se -> SE expr . ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> SE expr . ENTAO bloco FIM_SE
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    ENTAO           shift and go to state 76
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 55
+
+    (13) funcao -> DEF ID LPAREN . params RPAREN ARROW tipo declaracoes bloco FIM_DEF
+    (14) params -> .
+    (15) params -> . param_lista
+    (16) param_lista -> . param
+    (17) param_lista -> . param_lista COMMA param
+    (18) param -> . tipo : ID
+    (5) tipo -> . REAL
+    (6) tipo -> . VOID
+    (7) tipo -> . C_CHANNEL
+    (8) tipo -> . STRING
+    (9) tipo -> . BOOL
+    (10) tipo -> . INT
+    RPAREN          reduce using rule 14 (params -> .)
+    REAL            shift and go to state 10
+    VOID            shift and go to state 11
+    C_CHANNEL       shift and go to state 12
+    STRING          shift and go to state 13
+    BOOL            shift and go to state 14
+    INT             shift and go to state 15
+
+    params                         shift and go to state 77
+    tipo                           shift and go to state 78
+    param_lista                    shift and go to state 79
+    param                          shift and go to state 80
+
+state 56
+
+    (4) declaracoes -> declaracoes DECLARE tipo : ID .
+    DECLARE         reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    DEF             reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    FIM_PROGRAMA    reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    PAR             reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    RETURN          reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    SEND            reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    ESCREVA         reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    LEIA            reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    ENQUANTO        reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    SE              reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    ID              reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+    FIM_DEF         reduce using rule 4 (declaracoes -> declaracoes DECLARE tipo : ID .)
+
+
+state 57
+
+    (35) par_bloco -> PAR bloco FIM_PAR .
+    FIM_PROGRAMA    reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    PAR             reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    RETURN          reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    SEND            reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    ESCREVA         reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    LEIA            reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    ENQUANTO        reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    SE              reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    ID              reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    FIM_PAR         reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    FIM_ENQUANTO    reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    SENAO           reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    FIM_SE          reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+    FIM_DEF         reduce using rule 35 (par_bloco -> PAR bloco FIM_PAR .)
+
+
+state 58
+
+    (46) expr -> expr MENOS . termo
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    termo                          shift and go to state 81
+    fator                          shift and go to state 82
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 59
+
+    (47) expr -> expr MAIS . termo
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    termo                          shift and go to state 83
+    fator                          shift and go to state 82
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 60
+
+    (39) expr -> fator_expr GE . fator_expr
+    (51) fator_expr -> . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator_expr                     shift and go to state 84
+    fator                          shift and go to state 85
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 61
+
+    (40) expr -> fator_expr GT . fator_expr
+    (51) fator_expr -> . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator_expr                     shift and go to state 86
+    fator                          shift and go to state 85
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 62
+
+    (41) expr -> fator_expr LE . fator_expr
+    (51) fator_expr -> . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator_expr                     shift and go to state 87
+    fator                          shift and go to state 85
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 63
+
+    (42) expr -> fator_expr LT . fator_expr
+    (51) fator_expr -> . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator_expr                     shift and go to state 88
+    fator                          shift and go to state 85
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 64
+
+    (43) expr -> fator_expr NE . fator_expr
+    (51) fator_expr -> . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator_expr                     shift and go to state 89
+    fator                          shift and go to state 85
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 65
+
+    (44) expr -> fator_expr EQ . fator_expr
+    (51) fator_expr -> . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator_expr                     shift and go to state 90
+    fator                          shift and go to state 85
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 66
+
+    (49) termo -> termo DIVIDE . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator                          shift and go to state 91
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 67
+
+    (50) termo -> termo VEZES . fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    fator                          shift and go to state 92
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 68
+
+    (54) fator -> LPAREN expr . RPAREN
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    RPAREN          shift and go to state 93
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 69
+
+    (59) call -> ID LPAREN . args RPAREN
+    (61) args -> .
+    (62) args -> . arg_lista
+    (63) arg_lista -> . expr
+    (64) arg_lista -> . arg_lista COMMA expr
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    RPAREN          reduce using rule 61 (args -> .)
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    args                           shift and go to state 94
+    arg_lista                      shift and go to state 95
+    expr                           shift and go to state 96
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 70
+
+    (60) receive_expr -> RECEIVE LPAREN . ID RPAREN
+    ID              shift and go to state 97
+
+
+state 71
+
+    (36) comando_send -> SEND LPAREN ID . COMMA expr RPAREN
+    COMMA           shift and go to state 98
+
+
+state 72
+
+    (29) comando_atribuicao -> ID ASSIGN expr .
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    FIM_PROGRAMA    reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    PAR             reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    RETURN          reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    SEND            reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    ESCREVA         reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    LEIA            reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    ENQUANTO        reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    SE              reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    ID              reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    FIM_PAR         reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    FIM_ENQUANTO    reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    SENAO           reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    FIM_SE          reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    FIM_DEF         reduce using rule 29 (comando_atribuicao -> ID ASSIGN expr .)
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 73
+
+    (34) comando_escreva -> ESCREVA LPAREN expr . RPAREN
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    RPAREN          shift and go to state 99
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 74
+
+    (33) comando_leia -> LEIA LPAREN ID . RPAREN
+    RPAREN          shift and go to state 100
+
+
+state 75
+
+    (32) comando_enquanto -> ENQUANTO expr FACA . bloco FIM_ENQUANTO
+    (19) bloco -> .
+    (20) bloco -> . bloco comando
+    FIM_ENQUANTO    reduce using rule 19 (bloco -> .)
+    PAR             reduce using rule 19 (bloco -> .)
+    RETURN          reduce using rule 19 (bloco -> .)
+    SEND            reduce using rule 19 (bloco -> .)
+    ESCREVA         reduce using rule 19 (bloco -> .)
+    LEIA            reduce using rule 19 (bloco -> .)
+    ENQUANTO        reduce using rule 19 (bloco -> .)
+    SE              reduce using rule 19 (bloco -> .)
+    ID              reduce using rule 19 (bloco -> .)
+
+    bloco                          shift and go to state 101
+
+state 76
+
+    (30) comando_se -> SE expr ENTAO . bloco SENAO bloco FIM_SE
+    (31) comando_se -> SE expr ENTAO . bloco FIM_SE
+    (19) bloco -> .
+    (20) bloco -> . bloco comando
+    SENAO           reduce using rule 19 (bloco -> .)
+    FIM_SE          reduce using rule 19 (bloco -> .)
+    PAR             reduce using rule 19 (bloco -> .)
+    RETURN          reduce using rule 19 (bloco -> .)
+    SEND            reduce using rule 19 (bloco -> .)
+    ESCREVA         reduce using rule 19 (bloco -> .)
+    LEIA            reduce using rule 19 (bloco -> .)
+    ENQUANTO        reduce using rule 19 (bloco -> .)
+    SE              reduce using rule 19 (bloco -> .)
+    ID              reduce using rule 19 (bloco -> .)
+
+    bloco                          shift and go to state 102
+
+state 77
+
+    (13) funcao -> DEF ID LPAREN params . RPAREN ARROW tipo declaracoes bloco FIM_DEF
+    RPAREN          shift and go to state 103
+
+
+state 78
+
+    (18) param -> tipo . : ID
+    :               shift and go to state 104
+
+
+state 79
+
+    (15) params -> param_lista .
+    (17) param_lista -> param_lista . COMMA param
+    RPAREN          reduce using rule 15 (params -> param_lista .)
+    COMMA           shift and go to state 105
+
+
+state 80
+
+    (16) param_lista -> param .
+    COMMA           reduce using rule 16 (param_lista -> param .)
+    RPAREN          reduce using rule 16 (param_lista -> param .)
+
+
+state 81
+
+    (46) expr -> expr MENOS termo .
+    (49) termo -> termo . DIVIDE fator
+    (50) termo -> termo . VEZES fator
+    MENOS           reduce using rule 46 (expr -> expr MENOS termo .)
+    MAIS            reduce using rule 46 (expr -> expr MENOS termo .)
+    FIM_PROGRAMA    reduce using rule 46 (expr -> expr MENOS termo .)
+    PAR             reduce using rule 46 (expr -> expr MENOS termo .)
+    RETURN          reduce using rule 46 (expr -> expr MENOS termo .)
+    SEND            reduce using rule 46 (expr -> expr MENOS termo .)
+    ESCREVA         reduce using rule 46 (expr -> expr MENOS termo .)
+    LEIA            reduce using rule 46 (expr -> expr MENOS termo .)
+    ENQUANTO        reduce using rule 46 (expr -> expr MENOS termo .)
+    SE              reduce using rule 46 (expr -> expr MENOS termo .)
+    ID              reduce using rule 46 (expr -> expr MENOS termo .)
+    FIM_PAR         reduce using rule 46 (expr -> expr MENOS termo .)
+    FIM_ENQUANTO    reduce using rule 46 (expr -> expr MENOS termo .)
+    SENAO           reduce using rule 46 (expr -> expr MENOS termo .)
+    FIM_SE          reduce using rule 46 (expr -> expr MENOS termo .)
+    FIM_DEF         reduce using rule 46 (expr -> expr MENOS termo .)
+    FACA            reduce using rule 46 (expr -> expr MENOS termo .)
+    ENTAO           reduce using rule 46 (expr -> expr MENOS termo .)
+    RPAREN          reduce using rule 46 (expr -> expr MENOS termo .)
+    COMMA           reduce using rule 46 (expr -> expr MENOS termo .)
+    DIVIDE          shift and go to state 66
+    VEZES           shift and go to state 67
+
+
+state 82
+
+    (48) termo -> fator .
+    DIVIDE          reduce using rule 48 (termo -> fator .)
+    VEZES           reduce using rule 48 (termo -> fator .)
+    MENOS           reduce using rule 48 (termo -> fator .)
+    MAIS            reduce using rule 48 (termo -> fator .)
+    FIM_PROGRAMA    reduce using rule 48 (termo -> fator .)
+    PAR             reduce using rule 48 (termo -> fator .)
+    RETURN          reduce using rule 48 (termo -> fator .)
+    SEND            reduce using rule 48 (termo -> fator .)
+    ESCREVA         reduce using rule 48 (termo -> fator .)
+    LEIA            reduce using rule 48 (termo -> fator .)
+    ENQUANTO        reduce using rule 48 (termo -> fator .)
+    SE              reduce using rule 48 (termo -> fator .)
+    ID              reduce using rule 48 (termo -> fator .)
+    FIM_PAR         reduce using rule 48 (termo -> fator .)
+    FIM_ENQUANTO    reduce using rule 48 (termo -> fator .)
+    SENAO           reduce using rule 48 (termo -> fator .)
+    FIM_SE          reduce using rule 48 (termo -> fator .)
+    FIM_DEF         reduce using rule 48 (termo -> fator .)
+    FACA            reduce using rule 48 (termo -> fator .)
+    ENTAO           reduce using rule 48 (termo -> fator .)
+    RPAREN          reduce using rule 48 (termo -> fator .)
+    COMMA           reduce using rule 48 (termo -> fator .)
+
+
+state 83
+
+    (47) expr -> expr MAIS termo .
+    (49) termo -> termo . DIVIDE fator
+    (50) termo -> termo . VEZES fator
+    MENOS           reduce using rule 47 (expr -> expr MAIS termo .)
+    MAIS            reduce using rule 47 (expr -> expr MAIS termo .)
+    FIM_PROGRAMA    reduce using rule 47 (expr -> expr MAIS termo .)
+    PAR             reduce using rule 47 (expr -> expr MAIS termo .)
+    RETURN          reduce using rule 47 (expr -> expr MAIS termo .)
+    SEND            reduce using rule 47 (expr -> expr MAIS termo .)
+    ESCREVA         reduce using rule 47 (expr -> expr MAIS termo .)
+    LEIA            reduce using rule 47 (expr -> expr MAIS termo .)
+    ENQUANTO        reduce using rule 47 (expr -> expr MAIS termo .)
+    SE              reduce using rule 47 (expr -> expr MAIS termo .)
+    ID              reduce using rule 47 (expr -> expr MAIS termo .)
+    FIM_PAR         reduce using rule 47 (expr -> expr MAIS termo .)
+    FIM_ENQUANTO    reduce using rule 47 (expr -> expr MAIS termo .)
+    SENAO           reduce using rule 47 (expr -> expr MAIS termo .)
+    FIM_SE          reduce using rule 47 (expr -> expr MAIS termo .)
+    FIM_DEF         reduce using rule 47 (expr -> expr MAIS termo .)
+    FACA            reduce using rule 47 (expr -> expr MAIS termo .)
+    ENTAO           reduce using rule 47 (expr -> expr MAIS termo .)
+    RPAREN          reduce using rule 47 (expr -> expr MAIS termo .)
+    COMMA           reduce using rule 47 (expr -> expr MAIS termo .)
+    DIVIDE          shift and go to state 66
+    VEZES           shift and go to state 67
+
+
+state 84
+
+    (39) expr -> fator_expr GE fator_expr .
+    MENOS           reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    MAIS            reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    FIM_PROGRAMA    reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    PAR             reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    RETURN          reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    SEND            reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    ESCREVA         reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    LEIA            reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    ENQUANTO        reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    SE              reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    ID              reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    FIM_PAR         reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    FIM_ENQUANTO    reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    SENAO           reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    FIM_SE          reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    FIM_DEF         reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    FACA            reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    ENTAO           reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    RPAREN          reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+    COMMA           reduce using rule 39 (expr -> fator_expr GE fator_expr .)
+
+
+state 85
+
+    (51) fator_expr -> fator .
+    MENOS           reduce using rule 51 (fator_expr -> fator .)
+    MAIS            reduce using rule 51 (fator_expr -> fator .)
+    FIM_PROGRAMA    reduce using rule 51 (fator_expr -> fator .)
+    PAR             reduce using rule 51 (fator_expr -> fator .)
+    RETURN          reduce using rule 51 (fator_expr -> fator .)
+    SEND            reduce using rule 51 (fator_expr -> fator .)
+    ESCREVA         reduce using rule 51 (fator_expr -> fator .)
+    LEIA            reduce using rule 51 (fator_expr -> fator .)
+    ENQUANTO        reduce using rule 51 (fator_expr -> fator .)
+    SE              reduce using rule 51 (fator_expr -> fator .)
+    ID              reduce using rule 51 (fator_expr -> fator .)
+    FIM_PAR         reduce using rule 51 (fator_expr -> fator .)
+    FIM_ENQUANTO    reduce using rule 51 (fator_expr -> fator .)
+    SENAO           reduce using rule 51 (fator_expr -> fator .)
+    FIM_SE          reduce using rule 51 (fator_expr -> fator .)
+    FIM_DEF         reduce using rule 51 (fator_expr -> fator .)
+    FACA            reduce using rule 51 (fator_expr -> fator .)
+    ENTAO           reduce using rule 51 (fator_expr -> fator .)
+    RPAREN          reduce using rule 51 (fator_expr -> fator .)
+    COMMA           reduce using rule 51 (fator_expr -> fator .)
+
+
+state 86
+
+    (40) expr -> fator_expr GT fator_expr .
+    MENOS           reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    MAIS            reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    FIM_PROGRAMA    reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    PAR             reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    RETURN          reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    SEND            reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    ESCREVA         reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    LEIA            reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    ENQUANTO        reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    SE              reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    ID              reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    FIM_PAR         reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    FIM_ENQUANTO    reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    SENAO           reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    FIM_SE          reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    FIM_DEF         reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    FACA            reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    ENTAO           reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    RPAREN          reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+    COMMA           reduce using rule 40 (expr -> fator_expr GT fator_expr .)
+
+
+state 87
+
+    (41) expr -> fator_expr LE fator_expr .
+    MENOS           reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    MAIS            reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    FIM_PROGRAMA    reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    PAR             reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    RETURN          reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    SEND            reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    ESCREVA         reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    LEIA            reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    ENQUANTO        reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    SE              reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    ID              reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    FIM_PAR         reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    FIM_ENQUANTO    reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    SENAO           reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    FIM_SE          reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    FIM_DEF         reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    FACA            reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    ENTAO           reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    RPAREN          reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+    COMMA           reduce using rule 41 (expr -> fator_expr LE fator_expr .)
+
+
+state 88
+
+    (42) expr -> fator_expr LT fator_expr .
+    MENOS           reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    MAIS            reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    FIM_PROGRAMA    reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    PAR             reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    RETURN          reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    SEND            reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    ESCREVA         reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    LEIA            reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    ENQUANTO        reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    SE              reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    ID              reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    FIM_PAR         reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    FIM_ENQUANTO    reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    SENAO           reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    FIM_SE          reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    FIM_DEF         reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    FACA            reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    ENTAO           reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    RPAREN          reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+    COMMA           reduce using rule 42 (expr -> fator_expr LT fator_expr .)
+
+
+state 89
+
+    (43) expr -> fator_expr NE fator_expr .
+    MENOS           reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    MAIS            reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    FIM_PROGRAMA    reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    PAR             reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    RETURN          reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    SEND            reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    ESCREVA         reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    LEIA            reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    ENQUANTO        reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    SE              reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    ID              reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    FIM_PAR         reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    FIM_ENQUANTO    reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    SENAO           reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    FIM_SE          reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    FIM_DEF         reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    FACA            reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    ENTAO           reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    RPAREN          reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+    COMMA           reduce using rule 43 (expr -> fator_expr NE fator_expr .)
+
+
+state 90
+
+    (44) expr -> fator_expr EQ fator_expr .
+    MENOS           reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    MAIS            reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    FIM_PROGRAMA    reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    PAR             reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    RETURN          reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    SEND            reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    ESCREVA         reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    LEIA            reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    ENQUANTO        reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    SE              reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    ID              reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    FIM_PAR         reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    FIM_ENQUANTO    reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    SENAO           reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    FIM_SE          reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    FIM_DEF         reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    FACA            reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    ENTAO           reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    RPAREN          reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+    COMMA           reduce using rule 44 (expr -> fator_expr EQ fator_expr .)
+
+
+state 91
+
+    (49) termo -> termo DIVIDE fator .
+    DIVIDE          reduce using rule 49 (termo -> termo DIVIDE fator .)
+    VEZES           reduce using rule 49 (termo -> termo DIVIDE fator .)
+    MENOS           reduce using rule 49 (termo -> termo DIVIDE fator .)
+    MAIS            reduce using rule 49 (termo -> termo DIVIDE fator .)
+    FIM_PROGRAMA    reduce using rule 49 (termo -> termo DIVIDE fator .)
+    PAR             reduce using rule 49 (termo -> termo DIVIDE fator .)
+    RETURN          reduce using rule 49 (termo -> termo DIVIDE fator .)
+    SEND            reduce using rule 49 (termo -> termo DIVIDE fator .)
+    ESCREVA         reduce using rule 49 (termo -> termo DIVIDE fator .)
+    LEIA            reduce using rule 49 (termo -> termo DIVIDE fator .)
+    ENQUANTO        reduce using rule 49 (termo -> termo DIVIDE fator .)
+    SE              reduce using rule 49 (termo -> termo DIVIDE fator .)
+    ID              reduce using rule 49 (termo -> termo DIVIDE fator .)
+    FIM_PAR         reduce using rule 49 (termo -> termo DIVIDE fator .)
+    FIM_ENQUANTO    reduce using rule 49 (termo -> termo DIVIDE fator .)
+    SENAO           reduce using rule 49 (termo -> termo DIVIDE fator .)
+    FIM_SE          reduce using rule 49 (termo -> termo DIVIDE fator .)
+    FIM_DEF         reduce using rule 49 (termo -> termo DIVIDE fator .)
+    FACA            reduce using rule 49 (termo -> termo DIVIDE fator .)
+    ENTAO           reduce using rule 49 (termo -> termo DIVIDE fator .)
+    RPAREN          reduce using rule 49 (termo -> termo DIVIDE fator .)
+    COMMA           reduce using rule 49 (termo -> termo DIVIDE fator .)
+
+
+state 92
+
+    (50) termo -> termo VEZES fator .
+    DIVIDE          reduce using rule 50 (termo -> termo VEZES fator .)
+    VEZES           reduce using rule 50 (termo -> termo VEZES fator .)
+    MENOS           reduce using rule 50 (termo -> termo VEZES fator .)
+    MAIS            reduce using rule 50 (termo -> termo VEZES fator .)
+    FIM_PROGRAMA    reduce using rule 50 (termo -> termo VEZES fator .)
+    PAR             reduce using rule 50 (termo -> termo VEZES fator .)
+    RETURN          reduce using rule 50 (termo -> termo VEZES fator .)
+    SEND            reduce using rule 50 (termo -> termo VEZES fator .)
+    ESCREVA         reduce using rule 50 (termo -> termo VEZES fator .)
+    LEIA            reduce using rule 50 (termo -> termo VEZES fator .)
+    ENQUANTO        reduce using rule 50 (termo -> termo VEZES fator .)
+    SE              reduce using rule 50 (termo -> termo VEZES fator .)
+    ID              reduce using rule 50 (termo -> termo VEZES fator .)
+    FIM_PAR         reduce using rule 50 (termo -> termo VEZES fator .)
+    FIM_ENQUANTO    reduce using rule 50 (termo -> termo VEZES fator .)
+    SENAO           reduce using rule 50 (termo -> termo VEZES fator .)
+    FIM_SE          reduce using rule 50 (termo -> termo VEZES fator .)
+    FIM_DEF         reduce using rule 50 (termo -> termo VEZES fator .)
+    FACA            reduce using rule 50 (termo -> termo VEZES fator .)
+    ENTAO           reduce using rule 50 (termo -> termo VEZES fator .)
+    RPAREN          reduce using rule 50 (termo -> termo VEZES fator .)
+    COMMA           reduce using rule 50 (termo -> termo VEZES fator .)
+
+
+state 93
+
+    (54) fator -> LPAREN expr RPAREN .
+    GE              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    GT              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    LE              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    LT              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    NE              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    EQ              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    DIVIDE          reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    VEZES           reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    MENOS           reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    MAIS            reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    FIM_PROGRAMA    reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    PAR             reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    RETURN          reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    SEND            reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    ESCREVA         reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    LEIA            reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    ENQUANTO        reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    SE              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    ID              reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    FIM_PAR         reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    FIM_ENQUANTO    reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    SENAO           reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    FIM_SE          reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    FIM_DEF         reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    FACA            reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    ENTAO           reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    RPAREN          reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+    COMMA           reduce using rule 54 (fator -> LPAREN expr RPAREN .)
+
+
+state 94
+
+    (59) call -> ID LPAREN args . RPAREN
+    RPAREN          shift and go to state 106
+
+
+state 95
+
+    (62) args -> arg_lista .
+    (64) arg_lista -> arg_lista . COMMA expr
+    RPAREN          reduce using rule 62 (args -> arg_lista .)
+    COMMA           shift and go to state 107
+
+
+state 96
+
+    (63) arg_lista -> expr .
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    COMMA           reduce using rule 63 (arg_lista -> expr .)
+    RPAREN          reduce using rule 63 (arg_lista -> expr .)
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 97
+
+    (60) receive_expr -> RECEIVE LPAREN ID . RPAREN
+    RPAREN          shift and go to state 108
+
+
+state 98
+
+    (36) comando_send -> SEND LPAREN ID COMMA . expr RPAREN
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 109
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 99
+
+    (34) comando_escreva -> ESCREVA LPAREN expr RPAREN .
+    FIM_PROGRAMA    reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    PAR             reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    RETURN          reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    SEND            reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    ESCREVA         reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    LEIA            reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    ENQUANTO        reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    SE              reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    ID              reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    FIM_PAR         reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    FIM_ENQUANTO    reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    SENAO           reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    FIM_SE          reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+    FIM_DEF         reduce using rule 34 (comando_escreva -> ESCREVA LPAREN expr RPAREN .)
+
+
+state 100
+
+    (33) comando_leia -> LEIA LPAREN ID RPAREN .
+    FIM_PROGRAMA    reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    PAR             reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    RETURN          reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    SEND            reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    ESCREVA         reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    LEIA            reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    ENQUANTO        reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    SE              reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    ID              reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    FIM_PAR         reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    FIM_ENQUANTO    reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    SENAO           reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    FIM_SE          reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+    FIM_DEF         reduce using rule 33 (comando_leia -> LEIA LPAREN ID RPAREN .)
+
+
+state 101
+
+    (32) comando_enquanto -> ENQUANTO expr FACA bloco . FIM_ENQUANTO
+    (20) bloco -> bloco . comando
+    (21) comando -> . par_bloco
+    (22) comando -> . comando_return
+    (23) comando -> . comando_send
+    (24) comando -> . comando_escreva
+    (25) comando -> . comando_leia
+    (26) comando -> . comando_enquanto
+    (27) comando -> . comando_se
+    (28) comando -> . comando_atribuicao
+    (35) par_bloco -> . PAR bloco FIM_PAR
+    (37) comando_return -> . RETURN
+    (38) comando_return -> . RETURN expr
+    (36) comando_send -> . SEND LPAREN ID COMMA expr RPAREN
+    (34) comando_escreva -> . ESCREVA LPAREN expr RPAREN
+    (33) comando_leia -> . LEIA LPAREN ID RPAREN
+    (32) comando_enquanto -> . ENQUANTO expr FACA bloco FIM_ENQUANTO
+    (30) comando_se -> . SE expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> . SE expr ENTAO bloco FIM_SE
+    (29) comando_atribuicao -> . ID ASSIGN expr
+    FIM_ENQUANTO    shift and go to state 110
+    PAR             shift and go to state 26
+    RETURN          shift and go to state 27
+    SEND            shift and go to state 28
+    ESCREVA         shift and go to state 30
+    LEIA            shift and go to state 31
+    ENQUANTO        shift and go to state 32
+    SE              shift and go to state 33
+    ID              shift and go to state 29
+
+    comando                        shift and go to state 17
+    par_bloco                      shift and go to state 18
+    comando_return                 shift and go to state 19
+    comando_send                   shift and go to state 20
+    comando_escreva                shift and go to state 21
+    comando_leia                   shift and go to state 22
+    comando_enquanto               shift and go to state 23
+    comando_se                     shift and go to state 24
+    comando_atribuicao             shift and go to state 25
+
+state 102
+
+    (30) comando_se -> SE expr ENTAO bloco . SENAO bloco FIM_SE
+    (31) comando_se -> SE expr ENTAO bloco . FIM_SE
+    (20) bloco -> bloco . comando
+    (21) comando -> . par_bloco
+    (22) comando -> . comando_return
+    (23) comando -> . comando_send
+    (24) comando -> . comando_escreva
+    (25) comando -> . comando_leia
+    (26) comando -> . comando_enquanto
+    (27) comando -> . comando_se
+    (28) comando -> . comando_atribuicao
+    (35) par_bloco -> . PAR bloco FIM_PAR
+    (37) comando_return -> . RETURN
+    (38) comando_return -> . RETURN expr
+    (36) comando_send -> . SEND LPAREN ID COMMA expr RPAREN
+    (34) comando_escreva -> . ESCREVA LPAREN expr RPAREN
+    (33) comando_leia -> . LEIA LPAREN ID RPAREN
+    (32) comando_enquanto -> . ENQUANTO expr FACA bloco FIM_ENQUANTO
+    (30) comando_se -> . SE expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> . SE expr ENTAO bloco FIM_SE
+    (29) comando_atribuicao -> . ID ASSIGN expr
+    SENAO           shift and go to state 111
+    FIM_SE          shift and go to state 112
+    PAR             shift and go to state 26
+    RETURN          shift and go to state 27
+    SEND            shift and go to state 28
+    ESCREVA         shift and go to state 30
+    LEIA            shift and go to state 31
+    ENQUANTO        shift and go to state 32
+    SE              shift and go to state 33
+    ID              shift and go to state 29
+
+    comando                        shift and go to state 17
+    par_bloco                      shift and go to state 18
+    comando_return                 shift and go to state 19
+    comando_send                   shift and go to state 20
+    comando_escreva                shift and go to state 21
+    comando_leia                   shift and go to state 22
+    comando_enquanto               shift and go to state 23
+    comando_se                     shift and go to state 24
+    comando_atribuicao             shift and go to state 25
+
+state 103
+
+    (13) funcao -> DEF ID LPAREN params RPAREN . ARROW tipo declaracoes bloco FIM_DEF
+    ARROW           shift and go to state 113
+
+
+state 104
+
+    (18) param -> tipo : . ID
+    ID              shift and go to state 114
+
+
+state 105
+
+    (17) param_lista -> param_lista COMMA . param
+    (18) param -> . tipo : ID
+    (5) tipo -> . REAL
+    (6) tipo -> . VOID
+    (7) tipo -> . C_CHANNEL
+    (8) tipo -> . STRING
+    (9) tipo -> . BOOL
+    (10) tipo -> . INT
+    REAL            shift and go to state 10
+    VOID            shift and go to state 11
+    C_CHANNEL       shift and go to state 12
+    STRING          shift and go to state 13
+    BOOL            shift and go to state 14
+    INT             shift and go to state 15
+
+    param                          shift and go to state 115
+    tipo                           shift and go to state 78
+
+state 106
+
+    (59) call -> ID LPAREN args RPAREN .
+    GE              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    GT              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    LE              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    LT              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    NE              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    EQ              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    DIVIDE          reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    VEZES           reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    MENOS           reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    MAIS            reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    FIM_PROGRAMA    reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    PAR             reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    RETURN          reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    SEND            reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    ESCREVA         reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    LEIA            reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    ENQUANTO        reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    SE              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    ID              reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    FIM_PAR         reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    FIM_ENQUANTO    reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    SENAO           reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    FIM_SE          reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    FIM_DEF         reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    FACA            reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    ENTAO           reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    RPAREN          reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+    COMMA           reduce using rule 59 (call -> ID LPAREN args RPAREN .)
+
+
+state 107
+
+    (64) arg_lista -> arg_lista COMMA . expr
+    (39) expr -> . fator_expr GE fator_expr
+    (40) expr -> . fator_expr GT fator_expr
+    (41) expr -> . fator_expr LE fator_expr
+    (42) expr -> . fator_expr LT fator_expr
+    (43) expr -> . fator_expr NE fator_expr
+    (44) expr -> . fator_expr EQ fator_expr
+    (45) expr -> . termo
+    (46) expr -> . expr MENOS termo
+    (47) expr -> . expr MAIS termo
+    (51) fator_expr -> . fator
+    (48) termo -> . fator
+    (49) termo -> . termo DIVIDE fator
+    (50) termo -> . termo VEZES fator
+    (52) fator -> . receive_expr
+    (53) fator -> . call
+    (54) fator -> . LPAREN expr RPAREN
+    (55) fator -> . ID
+    (56) fator -> . STRING_LITERAL
+    (57) fator -> . NUMERO_REAL
+    (58) fator -> . NUMERO_INT
+    (60) receive_expr -> . RECEIVE LPAREN ID RPAREN
+    (59) call -> . ID LPAREN args RPAREN
+    LPAREN          shift and go to state 43
+    ID              shift and go to state 44
+    STRING_LITERAL  shift and go to state 45
+    NUMERO_REAL     shift and go to state 46
+    NUMERO_INT      shift and go to state 47
+    RECEIVE         shift and go to state 48
+
+    expr                           shift and go to state 116
+    fator_expr                     shift and go to state 38
+    termo                          shift and go to state 39
+    fator                          shift and go to state 40
+    receive_expr                   shift and go to state 41
+    call                           shift and go to state 42
+
+state 108
+
+    (60) receive_expr -> RECEIVE LPAREN ID RPAREN .
+    GE              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    GT              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    LE              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    LT              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    NE              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    EQ              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    DIVIDE          reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    VEZES           reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    MENOS           reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    MAIS            reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    FIM_PROGRAMA    reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    PAR             reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    RETURN          reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    SEND            reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    ESCREVA         reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    LEIA            reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    ENQUANTO        reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    SE              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    ID              reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    FIM_PAR         reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    FIM_ENQUANTO    reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    SENAO           reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    FIM_SE          reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    FIM_DEF         reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    FACA            reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    ENTAO           reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    RPAREN          reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+    COMMA           reduce using rule 60 (receive_expr -> RECEIVE LPAREN ID RPAREN .)
+
+
+state 109
+
+    (36) comando_send -> SEND LPAREN ID COMMA expr . RPAREN
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    RPAREN          shift and go to state 117
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 110
+
+    (32) comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .
+    FIM_PROGRAMA    reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    PAR             reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    RETURN          reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    SEND            reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    ESCREVA         reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    LEIA            reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    ENQUANTO        reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    SE              reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    ID              reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    FIM_PAR         reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    FIM_ENQUANTO    reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    SENAO           reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    FIM_SE          reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+    FIM_DEF         reduce using rule 32 (comando_enquanto -> ENQUANTO expr FACA bloco FIM_ENQUANTO .)
+
+
+state 111
+
+    (30) comando_se -> SE expr ENTAO bloco SENAO . bloco FIM_SE
+    (19) bloco -> .
+    (20) bloco -> . bloco comando
+    FIM_SE          reduce using rule 19 (bloco -> .)
+    PAR             reduce using rule 19 (bloco -> .)
+    RETURN          reduce using rule 19 (bloco -> .)
+    SEND            reduce using rule 19 (bloco -> .)
+    ESCREVA         reduce using rule 19 (bloco -> .)
+    LEIA            reduce using rule 19 (bloco -> .)
+    ENQUANTO        reduce using rule 19 (bloco -> .)
+    SE              reduce using rule 19 (bloco -> .)
+    ID              reduce using rule 19 (bloco -> .)
+
+    bloco                          shift and go to state 118
+
+state 112
+
+    (31) comando_se -> SE expr ENTAO bloco FIM_SE .
+    FIM_PROGRAMA    reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    PAR             reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    RETURN          reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    SEND            reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    ESCREVA         reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    LEIA            reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    ENQUANTO        reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    SE              reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    ID              reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    FIM_PAR         reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    FIM_ENQUANTO    reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    SENAO           reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    FIM_SE          reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+    FIM_DEF         reduce using rule 31 (comando_se -> SE expr ENTAO bloco FIM_SE .)
+
+
+state 113
+
+    (13) funcao -> DEF ID LPAREN params RPAREN ARROW . tipo declaracoes bloco FIM_DEF
+    (5) tipo -> . REAL
+    (6) tipo -> . VOID
+    (7) tipo -> . C_CHANNEL
+    (8) tipo -> . STRING
+    (9) tipo -> . BOOL
+    (10) tipo -> . INT
+    REAL            shift and go to state 10
+    VOID            shift and go to state 11
+    C_CHANNEL       shift and go to state 12
+    STRING          shift and go to state 13
+    BOOL            shift and go to state 14
+    INT             shift and go to state 15
+
+    tipo                           shift and go to state 119
+
+state 114
+
+    (18) param -> tipo : ID .
+    COMMA           reduce using rule 18 (param -> tipo : ID .)
+    RPAREN          reduce using rule 18 (param -> tipo : ID .)
+
+
+state 115
+
+    (17) param_lista -> param_lista COMMA param .
+    COMMA           reduce using rule 17 (param_lista -> param_lista COMMA param .)
+    RPAREN          reduce using rule 17 (param_lista -> param_lista COMMA param .)
+
+
+state 116
+
+    (64) arg_lista -> arg_lista COMMA expr .
+    (46) expr -> expr . MENOS termo
+    (47) expr -> expr . MAIS termo
+    COMMA           reduce using rule 64 (arg_lista -> arg_lista COMMA expr .)
+    RPAREN          reduce using rule 64 (arg_lista -> arg_lista COMMA expr .)
+    MENOS           shift and go to state 58
+    MAIS            shift and go to state 59
+
+
+state 117
+
+    (36) comando_send -> SEND LPAREN ID COMMA expr RPAREN .
+    FIM_PROGRAMA    reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    PAR             reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    RETURN          reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    SEND            reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    ESCREVA         reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    LEIA            reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    ENQUANTO        reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    SE              reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    ID              reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    FIM_PAR         reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    FIM_ENQUANTO    reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    SENAO           reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    FIM_SE          reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+    FIM_DEF         reduce using rule 36 (comando_send -> SEND LPAREN ID COMMA expr RPAREN .)
+
+
+state 118
+
+    (30) comando_se -> SE expr ENTAO bloco SENAO bloco . FIM_SE
+    (20) bloco -> bloco . comando
+    (21) comando -> . par_bloco
+    (22) comando -> . comando_return
+    (23) comando -> . comando_send
+    (24) comando -> . comando_escreva
+    (25) comando -> . comando_leia
+    (26) comando -> . comando_enquanto
+    (27) comando -> . comando_se
+    (28) comando -> . comando_atribuicao
+    (35) par_bloco -> . PAR bloco FIM_PAR
+    (37) comando_return -> . RETURN
+    (38) comando_return -> . RETURN expr
+    (36) comando_send -> . SEND LPAREN ID COMMA expr RPAREN
+    (34) comando_escreva -> . ESCREVA LPAREN expr RPAREN
+    (33) comando_leia -> . LEIA LPAREN ID RPAREN
+    (32) comando_enquanto -> . ENQUANTO expr FACA bloco FIM_ENQUANTO
+    (30) comando_se -> . SE expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> . SE expr ENTAO bloco FIM_SE
+    (29) comando_atribuicao -> . ID ASSIGN expr
+    FIM_SE          shift and go to state 120
+    PAR             shift and go to state 26
+    RETURN          shift and go to state 27
+    SEND            shift and go to state 28
+    ESCREVA         shift and go to state 30
+    LEIA            shift and go to state 31
+    ENQUANTO        shift and go to state 32
+    SE              shift and go to state 33
+    ID              shift and go to state 29
+
+    comando                        shift and go to state 17
+    par_bloco                      shift and go to state 18
+    comando_return                 shift and go to state 19
+    comando_send                   shift and go to state 20
+    comando_escreva                shift and go to state 21
+    comando_leia                   shift and go to state 22
+    comando_enquanto               shift and go to state 23
+    comando_se                     shift and go to state 24
+    comando_atribuicao             shift and go to state 25
+
+state 119
+
+    (13) funcao -> DEF ID LPAREN params RPAREN ARROW tipo . declaracoes bloco FIM_DEF
+    (3) declaracoes -> .
+    (4) declaracoes -> . declaracoes DECLARE tipo : ID
+    DECLARE         reduce using rule 3 (declaracoes -> .)
+    FIM_DEF         reduce using rule 3 (declaracoes -> .)
+    PAR             reduce using rule 3 (declaracoes -> .)
+    RETURN          reduce using rule 3 (declaracoes -> .)
+    SEND            reduce using rule 3 (declaracoes -> .)
+    ESCREVA         reduce using rule 3 (declaracoes -> .)
+    LEIA            reduce using rule 3 (declaracoes -> .)
+    ENQUANTO        reduce using rule 3 (declaracoes -> .)
+    SE              reduce using rule 3 (declaracoes -> .)
+    ID              reduce using rule 3 (declaracoes -> .)
+
+    declaracoes                    shift and go to state 121
+
+state 120
+
+    (30) comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .
+    FIM_PROGRAMA    reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    PAR             reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    RETURN          reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    SEND            reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    ESCREVA         reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    LEIA            reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    ENQUANTO        reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    SE              reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    ID              reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    FIM_PAR         reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    FIM_ENQUANTO    reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    SENAO           reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    FIM_SE          reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+    FIM_DEF         reduce using rule 30 (comando_se -> SE expr ENTAO bloco SENAO bloco FIM_SE .)
+
+
+state 121
+
+    (13) funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes . bloco FIM_DEF
+    (4) declaracoes -> declaracoes . DECLARE tipo : ID
+    (19) bloco -> .
+    (20) bloco -> . bloco comando
+    DECLARE         shift and go to state 5
+    FIM_DEF         reduce using rule 19 (bloco -> .)
+    PAR             reduce using rule 19 (bloco -> .)
+    RETURN          reduce using rule 19 (bloco -> .)
+    SEND            reduce using rule 19 (bloco -> .)
+    ESCREVA         reduce using rule 19 (bloco -> .)
+    LEIA            reduce using rule 19 (bloco -> .)
+    ENQUANTO        reduce using rule 19 (bloco -> .)
+    SE              reduce using rule 19 (bloco -> .)
+    ID              reduce using rule 19 (bloco -> .)
+
+    bloco                          shift and go to state 122
+
+state 122
+
+    (13) funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco . FIM_DEF
+    (20) bloco -> bloco . comando
+    (21) comando -> . par_bloco
+    (22) comando -> . comando_return
+    (23) comando -> . comando_send
+    (24) comando -> . comando_escreva
+    (25) comando -> . comando_leia
+    (26) comando -> . comando_enquanto
+    (27) comando -> . comando_se
+    (28) comando -> . comando_atribuicao
+    (35) par_bloco -> . PAR bloco FIM_PAR
+    (37) comando_return -> . RETURN
+    (38) comando_return -> . RETURN expr
+    (36) comando_send -> . SEND LPAREN ID COMMA expr RPAREN
+    (34) comando_escreva -> . ESCREVA LPAREN expr RPAREN
+    (33) comando_leia -> . LEIA LPAREN ID RPAREN
+    (32) comando_enquanto -> . ENQUANTO expr FACA bloco FIM_ENQUANTO
+    (30) comando_se -> . SE expr ENTAO bloco SENAO bloco FIM_SE
+    (31) comando_se -> . SE expr ENTAO bloco FIM_SE
+    (29) comando_atribuicao -> . ID ASSIGN expr
+    FIM_DEF         shift and go to state 123
+    PAR             shift and go to state 26
+    RETURN          shift and go to state 27
+    SEND            shift and go to state 28
+    ESCREVA         shift and go to state 30
+    LEIA            shift and go to state 31
+    ENQUANTO        shift and go to state 32
+    SE              shift and go to state 33
+    ID              shift and go to state 29
+
+    comando                        shift and go to state 17
+    par_bloco                      shift and go to state 18
+    comando_return                 shift and go to state 19
+    comando_send                   shift and go to state 20
+    comando_escreva                shift and go to state 21
+    comando_leia                   shift and go to state 22
+    comando_enquanto               shift and go to state 23
+    comando_se                     shift and go to state 24
+    comando_atribuicao             shift and go to state 25
+
+state 123
+
+    (13) funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .
+    DEF             reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    FIM_PROGRAMA    reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    PAR             reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    RETURN          reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    SEND            reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    ESCREVA         reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    LEIA            reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    ENQUANTO        reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    SE              reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+    ID              reduce using rule 13 (funcao -> DEF ID LPAREN params RPAREN ARROW tipo declaracoes bloco FIM_DEF .)
+
+
+Conflicts:
+
+shift/reduce conflict for ID in state 27 resolved as shift

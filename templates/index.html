@@ -61,48 +61,64 @@
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 15px;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #4a5acc;
+            background-color: #4a59c1;
+        }
+
+        .example-loader {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        #test-selector {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #load-test {
+            padding: 10px 15px;
+            margin-left: 10px;
+            background-color: #6c757d;
+        }
+
+        #load-test:hover {
+            background-color: #5a6268;
         }
 
         pre {
-            background-color: #eee;
-            padding: 10px;
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
             border-radius: 5px;
+            overflow-x: auto;
             white-space: pre-wrap;
-            font-family: 'Courier New', Courier, monospace;
             word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        .error {
-            color: red;
-            font-weight: bold;
+        .error-log {
+            background: #fff0f0;
+            color: #d00;
+            border: 1px solid #d00;
         }
 
-        .header-with-button {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #5b6ee1;
-            padding-bottom: 10px;
-        }
-
-        .header-with-button h2 {
-            border-bottom: none;
-            padding-bottom: 0;
-            margin: 0;
+        .output-container {
+            position: relative;
         }
 
         #copyAsmBtn {
-            padding: 8px 12px;
-            font-size: 14px;
-            background-color: #6c757d;
+            position: absolute;
+            top: 10px;
+            right: 15px;
             width: auto;
-            margin-top: 0;
-            transition: background-color 0.2s;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #6c757d;
         }
 
         #copyAsmBtn:hover {
@@ -114,68 +130,91 @@
 <body>
     <div class="container">
         <div class="editor">
-            <h1>Editor MiniPar</h1>
-            <form method="post">
-                <textarea name="codigo"
-                    placeholder="Digite seu código MiniPar aqui...">{{ codigo_original }}</textarea>
-                <button type="submit">Compilar</button>
+            <h1>Compilador MiniPar 2025.1</h1>
+            <form method="POST" action="/">
+                <div class="example-loader">
+                    <select id="test-selector">
+                        <option value="">Selecione um exemplo...</option>
+                        {% for nome, codigo in exemplos.items() %}
+                        <option value="{{ loop.index0 }}">{{ nome }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" id="load-test">Carregar</button>
+                </div>
+
+                <textarea id="code-editor" name="codigo" rows="20"
+                    placeholder="Escreva seu código MiniPar aqui...">{{ codigo_original }}</textarea>
+                <br>
+                <button type="submit">Compilar e Executar</button>
             </form>
+
+            {% for codigo in exemplos.values() %}
+            <textarea class="example-code" style="display: none;">{{ codigo }}</textarea>
+            {% endfor %}
+
         </div>
+
         <div class="output">
-            <h1>Resultado da Compilação</h1>
+            <h2>Resultados da Compilação</h2>
             {% if resultados %}
             {% if resultados.erros %}
             <h2>Erros</h2>
-            <pre class="error">{{ resultados.erros }}</pre>
-            {% else %}
-            <h2>FASE 1: Análise Léxica</h2>
-            <pre>{% for token in resultados.tokens %}{{ token }}
-{% endfor %}</pre>
+            <pre class="error-log">{{ resultados.erros }}</pre>
+            {% endif %}
 
-            <h2>FASE 2: Análise Sintática</h2>
-            <p>Análise sintática concluída com sucesso. AST gerada:</p>
+            <h2>Tokens (Análise Léxica)</h2>
+            <pre>{{ resultados.tokens }}</pre>
+
+            <h2>Árvore Sintática (AST)</h2>
             <pre>{{ resultados.ast_formatada }}</pre>
 
-            <h2>FASE 3: Código de Três Endereços</h2>
-            <pre>{% for instrucao in resultados.codigo_c3e %}{{ instrucao }}
-{% endfor %}</pre>
+            <h2>Código de 3 Endereços (C3E)</h2>
+            <pre>{{ resultados.codigo_c3e }}</pre>
 
-            <div class="header-with-button">
-                <h2>FASE 4: Código Assembly (ARMv7)</h2>
+            <h2>Código Assembly (ARMv7)</h2>
+            <div class="output-container">
                 <button id="copyAsmBtn" onclick="copyAsmCode()">Copiar Código</button>
             </div>
-            <pre id="asmCode">{% for instrucao in resultados.codigo_asm %}{{ instrucao }}
-{% endfor %}</pre>
-            <p><b>Para usar no CPULator:</b> Copie o código Assembly, cole no editor do CPULator, clique em "Compile & Load" e depois em "Run".</p>
-            {% endif %}
+            <pre id="asmCode">{{ resultados.codigo_asm }}</pre>
+            <p><b>Para usar no CPULator:</b> Copie o código Assembly, cole no editor do CPULator, clique em "Compile &
+                Load" e depois em "Run".</p>
             {% else %}
             <p>Aguardando código para compilar...</p>
             {% endif %}
         </div>
-    </div>
 
-    <script>
-        function copyAsmCode() {
-            const asmCodeElement = document.getElementById('asmCode');
-            const copyButton = document.getElementById('copyAsmBtn');
+        <script>
+            function copyAsmCode() {
+                const asmCodeElement = document.getElementById('asmCode');
+                const copyButton = document.getElementById('copyAsmBtn');
 
-            if (asmCodeElement) {
-                const codeToCopy = asmCodeElement.innerText;
-                navigator.clipboard.writeText(codeToCopy).then(() => {
-                    const originalText = copyButton.innerText;
-                    copyButton.innerText = 'Copiado!';
-                    copyButton.style.backgroundColor = '#28a745';
-                    setTimeout(() => {
-                        copyButton.innerText = originalText;
-                        copyButton.style.backgroundColor = '#6c757d';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Erro ao copiar o código: ', err);
-                    alert('Falha ao copiar o código.');
-                });
+                if (asmCodeElement) {
+                    const codeToCopy = asmCodeElement.innerText;
+                    navigator.clipboard.writeText(codeToCopy).then(() => {
+                        const originalText = copyButton.innerText;
+                        copyButton.innerText = 'Copiado!';
+                        copyButton.style.backgroundColor = '#28a745';
+                        setTimeout(() => {
+                            copyButton.innerText = originalText;
+                            copyButton.style.backgroundColor = '#6c757d';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Erro ao copiar o código: ', err);
+                        alert('Falha ao copiar o código.');
+                    });
+                }
             }
-        }
-    </script>
+
+            document.getElementById('load-test').addEventListener('click', function () {
+                const selector = document.getElementById('test-selector');
+                const selectedIndex = selector.value;
+                if (selectedIndex !== "") {
+                    const codeSnippets = document.querySelectorAll('.example-code');
+                    const editor = document.getElementById('code-editor');
+                    editor.value = codeSnippets[selectedIndex].value;
+                }
+            });
+        </script>
 </body>
 
 </html>
