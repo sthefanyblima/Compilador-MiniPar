@@ -68,13 +68,35 @@ class ARMv7CodeGenerator:
                 stack_size += 4
         
         if stack_size > 0:
-            self.text_section.append(f"    sub sp, sp, #{stack_size}")
+            # Verificar se stack_size é grande demais para uso direto
+            if stack_size > 255:
+                # Colocar constante na seção .data
+                const_label = f"const_stack_{stack_size}"
+                if const_label not in self.float_literals:
+                    self.float_literals[const_label] = str(stack_size)
+                    self.data_section.append(f"{const_label}: .word {stack_size}")
+                self.text_section.append(f"    ldr r0, ={const_label}")
+                self.text_section.append(f"    ldr r0, [r0]")
+                self.text_section.append("    sub sp, sp, r0")
+            else:
+                self.text_section.append(f"    sub sp, sp, #{stack_size}")
         
         self.process_c3e_block(c3e_code)
         
         # Terminar com loop infinito (compatível com CPUlator)
         if stack_size > 0:
-            self.text_section.append(f"    add sp, sp, #{stack_size}")
+            # Verificar se stack_size é grande demais para uso direto
+            if stack_size > 255:
+                # Colocar constante na seção .data
+                const_label = f"const_stack_{stack_size}"
+                if const_label not in self.float_literals:
+                    self.float_literals[const_label] = str(stack_size)
+                    self.data_section.append(f"{const_label}: .word {stack_size}")
+                self.text_section.append(f"    ldr r0, ={const_label}")
+                self.text_section.append(f"    ldr r0, [r0]")
+                self.text_section.append("    add sp, sp, r0")
+            else:
+                self.text_section.append(f"    add sp, sp, #{stack_size}")
         self.text_section.append("END:")
         self.text_section.append("    B .")  # Loop infinito - compatível com CPUlator
         
@@ -159,7 +181,18 @@ class ARMv7CodeGenerator:
                 num_params = int(parts[2])
                 self.text_section.append(f"    bl {func_name}")
                 if num_params > 4:
-                    self.text_section.append(f"    add sp, sp, #{(num_params - 4) * 4}")
+                    stack_adjust = (num_params - 4) * 4
+                    if stack_adjust > 255:
+                        # Colocar constante na seção .data
+                        const_label = f"const_stackadj_{stack_adjust}"
+                        if const_label not in self.float_literals:
+                            self.float_literals[const_label] = str(stack_adjust)
+                            self.data_section.append(f"{const_label}: .word {stack_adjust}")
+                        self.text_section.append(f"    ldr r0, ={const_label}")
+                        self.text_section.append(f"    ldr r0, [r0]")
+                        self.text_section.append("    add sp, sp, r0")
+                    else:
+                        self.text_section.append(f"    add sp, sp, #{stack_adjust}")
                 self.param_reg_count = 0
                 
             elif "ARRAY_ADDR" in parts:
@@ -283,6 +316,59 @@ class ARMv7CodeGenerator:
             self.next_stack_offset -= 4
         return self.var_locations[var]
 
+    def get_offset_from_location(self, location):
+        """Extrai o offset numérico de uma localização [fp, #offset] ou [fp, #-offset]"""
+        if '#-' in location:
+            offset_str = location.split('#-')[1].split(']')[0]
+            return -int(offset_str)
+        elif '#' in location:
+            offset_str = location.split('#')[1].split(']')[0]
+            return int(offset_str)
+        return 0
+    
+    def load_with_offset(self, base_reg, offset, dest_reg, use_add=True):
+        """Carrega valor usando offset, usando método indireto se offset > 4095"""
+        abs_offset = abs(offset)
+        # Limite muito conservador: 255 (para evitar erros no CPUlator)
+        if abs_offset > 255:
+            # Offset muito grande - usar método indireto
+            # Carregar offset em registrador temporário
+            temp_reg = "r2" if dest_reg != "r2" else "r3"
+            self.text_section.append(f"    ldr {temp_reg}, ={offset}")
+            if offset < 0:
+                self.text_section.append(f"    sub {dest_reg}, {base_reg}, {temp_reg}")
+            else:
+                self.text_section.append(f"    add {dest_reg}, {base_reg}, {temp_reg}")
+            self.text_section.append(f"    ldr {dest_reg}, [{dest_reg}]")
+        else:
+            # Offset pequeno - usar diretamente
+            if offset < 0:
+                self.text_section.append(f"    ldr {dest_reg}, [{base_reg}, #{offset}]")
+            else:
+                self.text_section.append(f"    ldr {dest_reg}, [{base_reg}, #{offset}]")
+    
+    def store_with_offset(self, src_reg, base_reg, offset, dest_reg=None):
+        """Armazena valor usando offset, usando método indireto se offset > 4095"""
+        abs_offset = abs(offset)
+        # Limite muito conservador: 255 (para evitar erros no CPUlator)
+        if abs_offset > 255:
+            # Offset muito grande - usar método indireto
+            temp_reg = dest_reg if dest_reg else "r2"
+            # Carregar offset em registrador temporário
+            offset_temp = "r3" if temp_reg != "r3" else "r2"
+            self.text_section.append(f"    ldr {offset_temp}, ={offset}")
+            if offset < 0:
+                self.text_section.append(f"    sub {temp_reg}, {base_reg}, {offset_temp}")
+            else:
+                self.text_section.append(f"    add {temp_reg}, {base_reg}, {offset_temp}")
+            self.text_section.append(f"    str {src_reg}, [{temp_reg}]")
+        else:
+            # Offset pequeno - usar diretamente
+            if offset < 0:
+                self.text_section.append(f"    str {src_reg}, [{base_reg}, #{offset}]")
+            else:
+                self.text_section.append(f"    str {src_reg}, [{base_reg}, #{offset}]")
+    
     def load_to_reg(self, src, reg):
         if src.replace('.', '', 1).isdigit() or (src.startswith('-') and src[1:].replace('.', '', 1).isdigit()):
             if "." in src:
@@ -298,32 +384,102 @@ class ARMv7CodeGenerator:
             # Se é um array, o location é o endereço base - carregar o endereço (não o valor)
             if src in self.array_sizes:
                 # Array: calcular endereço base (adicionar fp ao offset)
-                # Extrair offset da string [fp, #-128] ou [fp, #128]
-                if '#-' in location:
-                    offset_str = location.split('#-')[1].split(']')[0]
-                    offset = int(offset_str)
-                    # Usar sub para offset negativo
-                    self.text_section.append(f"    sub {reg}, fp, #{offset}")
-                elif '#' in location:
-                    offset_str = location.split('#')[1].split(']')[0]
-                    offset = int(offset_str)
-                    self.text_section.append(f"    add {reg}, fp, #{offset}")
+                offset = self.get_offset_from_location(location)
+                abs_offset = abs(offset)
+                # Limite muito conservador: 255 (para evitar erros no CPUlator)
+                if abs_offset > 255:
+                    # Offset muito grande - usar método indireto
+                    # Colocar constante na seção .data para evitar problemas com literal pool
+                    const_label = f"const_{abs(abs_offset)}"
+                    if const_label not in self.float_literals:
+                        self.float_literals[const_label] = str(abs_offset)
+                        self.data_section.append(f"{const_label}: .word {abs_offset}")
+                    temp_reg = "r2" if reg != "r2" else "r3"
+                    self.text_section.append(f"    ldr {temp_reg}, ={const_label}")
+                    self.text_section.append(f"    ldr {temp_reg}, [{temp_reg}]")
+                    if offset < 0:
+                        self.text_section.append(f"    sub {reg}, fp, {temp_reg}")
+                    else:
+                        self.text_section.append(f"    add {reg}, fp, {temp_reg}")
                 else:
-                    # Fallback - usar diretamente
-                    self.text_section.append(f"    mov {reg}, fp")
+                    # Offset pequeno - usar diretamente
+                    if offset < 0:
+                        self.text_section.append(f"    sub {reg}, fp, #{abs_offset}")
+                    else:
+                        self.text_section.append(f"    add {reg}, fp, #{offset}")
             else:
                 # Variável simples: carregar valor
-                self.text_section.append(f"    ldr {reg}, {location}")
+                offset = self.get_offset_from_location(location)
+                abs_offset = abs(offset)
+                # Limite muito conservador: 255 (para evitar erros no CPUlator)
+                if abs_offset > 255:
+                    # Offset muito grande - usar método indireto
+                    # Colocar constante na seção .data para evitar problemas com literal pool
+                    const_label = f"const_{abs(abs_offset)}"
+                    if const_label not in self.float_literals:
+                        self.float_literals[const_label] = str(abs_offset)
+                        self.data_section.append(f"{const_label}: .word {abs_offset}")
+                    temp_reg = "r2" if reg != "r2" else "r3"
+                    self.text_section.append(f"    ldr {temp_reg}, ={const_label}")
+                    self.text_section.append(f"    ldr {temp_reg}, [{temp_reg}]")
+                    if offset < 0:
+                        self.text_section.append(f"    sub {temp_reg}, fp, {temp_reg}")
+                    else:
+                        self.text_section.append(f"    add {temp_reg}, fp, {temp_reg}")
+                    self.text_section.append(f"    ldr {reg}, [{temp_reg}]")
+                else:
+                    # Offset pequeno - usar diretamente
+                    self.text_section.append(f"    ldr {reg}, {location}")
         elif src in self.string_literals:
             self.text_section.append(f"    ldr {reg}, ={src}")
         else:
             # Temporário - tentar carregar da localização (será criada se não existir)
             location = self.get_var_location(src)
-            self.text_section.append(f"    ldr {reg}, {location}")
+            offset = self.get_offset_from_location(location)
+            abs_offset = abs(offset)
+            # Limite muito conservador: 255 (para evitar erros no CPUlator)
+            if abs_offset > 255:
+                # Offset muito grande - usar método indireto
+                # Colocar constante na seção .data para evitar problemas com literal pool
+                const_label = f"const_{abs(abs_offset)}"
+                if const_label not in self.float_literals:
+                    self.float_literals[const_label] = str(abs_offset)
+                    self.data_section.append(f"{const_label}: .word {abs_offset}")
+                temp_reg = "r2" if reg != "r2" else "r3"
+                self.text_section.append(f"    ldr {temp_reg}, ={const_label}")
+                self.text_section.append(f"    ldr {temp_reg}, [{temp_reg}]")
+                if offset < 0:
+                    self.text_section.append(f"    sub {temp_reg}, fp, {temp_reg}")
+                else:
+                    self.text_section.append(f"    add {temp_reg}, fp, {temp_reg}")
+                self.text_section.append(f"    ldr {reg}, [{temp_reg}]")
+            else:
+                self.text_section.append(f"    ldr {reg}, {location}")
             
     def store_from_reg(self, dest, reg):
         location = self.get_var_location(dest)
-        self.text_section.append(f"    str {reg}, {location}")
+        offset = self.get_offset_from_location(location)
+        abs_offset = abs(offset)
+        # Limite muito conservador: 255 (para evitar erros no CPUlator)
+        if abs_offset > 255:
+            # Offset muito grande - usar método indireto
+            # Colocar constante na seção .data para evitar problemas com literal pool
+            const_label = f"const_{abs(abs_offset)}"
+            if const_label not in self.float_literals:
+                self.float_literals[const_label] = str(abs_offset)
+                self.data_section.append(f"{const_label}: .word {abs_offset}")
+            temp_reg = "r2" if reg != "r2" else "r3"
+            offset_temp = "r3" if temp_reg != "r3" else "r2"
+            self.text_section.append(f"    ldr {offset_temp}, ={const_label}")
+            self.text_section.append(f"    ldr {offset_temp}, [{offset_temp}]")
+            if offset < 0:
+                self.text_section.append(f"    sub {temp_reg}, fp, {offset_temp}")
+            else:
+                self.text_section.append(f"    add {temp_reg}, fp, {offset_temp}")
+            self.text_section.append(f"    str {reg}, [{temp_reg}]")
+        else:
+            # Offset pequeno - usar diretamente
+            self.text_section.append(f"    str {reg}, {location}")
         
     def write_value(self, src):
         # Para compatibilidade com CPUlator, não fazer I/O (comentar ao invés de executar)
@@ -345,7 +501,8 @@ class ARMv7CodeGenerator:
         self.text_section.append(f"    @ READ {dest} - I/O removido, inicializando com 0")
         location = self.get_var_location(dest)
         self.text_section.append("    mov r0, #0")
-        self.text_section.append(f"    str r0, {location}")
+        # Usar store_from_reg que já verifica offset grande
+        self.store_from_reg(dest, "r0")
         
     def get_stack_offset_for_var(self, var):
         """Retorna o offset da variável na pilha"""
