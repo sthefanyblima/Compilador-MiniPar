@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Compilador MiniPar 2025.1</title>
+    <title>Compilador MiniPar 2025</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,9 +19,19 @@
             padding: 20px;
         }
 
-        .editor,
-        .output {
+        .editor {
             flex: 1;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 95vh;
+            margin-right: 20px;
+        }
+
+        .output {
+            flex: 2;
             padding: 15px;
             background: white;
             border-radius: 8px;
@@ -30,8 +40,42 @@
             max-height: 95vh;
         }
 
-        .editor {
-            margin-right: 20px;
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #5b6ee1;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .tab.active {
+            background: #5b6ee1;
+            color: white;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active:hover {
+            background: #4a59c1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         h1,
@@ -124,6 +168,68 @@
         #copyAsmBtn:hover {
             background-color: #5a6268;
         }
+
+        /* Estilos para dropdown/accordion */
+        .accordion-section {
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .accordion-header {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+
+        .accordion-header.active {
+            background: #5b6ee1;
+            color: white;
+        }
+
+        .accordion-header.active:hover {
+            background: #4a59c1;
+        }
+
+        .accordion-icon {
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(90deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .accordion-content.expanded {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .accordion-content-inner {
+            padding: 15px;
+        }
+
+        .accordion-content pre {
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -156,28 +262,118 @@
 
         <div class="output">
             <h2>Resultados da Compilação</h2>
+            
             {% if resultados %}
-            {% if resultados.erros %}
-            <h2>Erros</h2>
-            <pre class="error-log">{{ resultados.erros }}</pre>
-            {% endif %}
-
-            <h2>Tokens (Análise Léxica)</h2>
-            <pre>{{ resultados.tokens }}</pre>
-
-            <h2>Árvore Sintática (AST)</h2>
-            <pre>{{ resultados.ast_formatada }}</pre>
-
-            <h2>Código de 3 Endereços (C3E)</h2>
-            <pre>{{ resultados.codigo_c3e }}</pre>
-
-            <h2>Código Assembly (ARMv7)</h2>
-            <div class="output-container">
-                <button id="copyAsmBtn" onclick="copyAsmCode()">Copiar Código</button>
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('compilation')">Compilação</div>
+                <div class="tab" onclick="showTab('execution')">Execução</div>
             </div>
-            <pre id="asmCode">{{ resultados.codigo_asm }}</pre>
-            <p><b>Para usar no CPULator:</b> Copie o código Assembly, cole no editor do CPULator, clique em "Compile &
-                Load" e depois em "Run".</p>
+
+            <div id="compilation" class="tab-content active">
+                {% if resultados %}
+                <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                    <button onclick="toggleAllAccordions(true)" style="width: auto; padding: 8px 15px; background-color: #28a745; font-size: 14px;">Expandir Todos</button>
+                    <button onclick="toggleAllAccordions(false)" style="width: auto; padding: 8px 15px; background-color: #dc3545; font-size: 14px;">Recolher Todos</button>
+                </div>
+                {% endif %}
+                
+                {% if resultados and resultados.erros %}
+                <div class="accordion-section">
+                    <div class="accordion-header active" onclick="toggleAccordion(this)">
+                        <span><strong>Erros</strong></span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                    <div class="accordion-content expanded">
+                        <div class="accordion-content-inner">
+                            <pre class="error-log">{{ resultados.erros }}</pre>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="accordion-section">
+                    <div class="accordion-header active" onclick="toggleAccordion(this)">
+                        <span><strong>Tokens (Análise Léxica)</strong></span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                    <div class="accordion-content expanded">
+                        <div class="accordion-content-inner">
+                            <pre>{{ resultados.tokens }}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-section">
+                    <div class="accordion-header active" onclick="toggleAccordion(this)">
+                        <span><strong>Árvore Sintática (AST)</strong></span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                    <div class="accordion-content expanded">
+                        <div class="accordion-content-inner">
+                            <pre>{{ resultados.ast_formatada }}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-section">
+                    <div class="accordion-header active" onclick="toggleAccordion(this)">
+                        <span><strong>Código de 3 Endereços (C3E)</strong></span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                    <div class="accordion-content expanded">
+                        <div class="accordion-content-inner">
+                            <pre>{{ resultados.codigo_c3e }}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-section">
+                    <div class="accordion-header active" onclick="toggleAccordion(this)">
+                        <span><strong>Código Assembly (ARMv7)</strong></span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                    <div class="accordion-content expanded">
+                        <div class="accordion-content-inner">
+                            <div class="output-container">
+                                <button id="copyAsmBtn" onclick="copyAsmCode()">Copiar Código</button>
+                            </div>
+                            <pre id="asmCode">{{ resultados.codigo_asm }}</pre>
+                            <p><b>Para usar no CPULator:</b> Copie o código Assembly, cole no editor do CPULator, clique em "Compile &
+                                Load" e depois em "Run".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="execution" class="tab-content">
+                <h3>Execução do Programa</h3>
+                <div style="margin-bottom: 15px;">
+                    <button onclick="executeProgram()" style="width: auto; padding: 10px 20px; margin-right: 10px;">Executar</button>
+                    <button onclick="clearOutput()" style="width: auto; padding: 10px 20px; background-color: #6c757d;">Limpar</button>
+                </div>
+                
+                <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; background: #f8f9fa; min-height: 200px;">
+                    <h4>Entrada:</h4>
+                    <textarea id="program-input" placeholder="Digite os valores de entrada (um por linha)..." 
+                              style="width: 100%; height: 80px; margin-bottom: 10px; padding: 5px;"></textarea>
+                    
+                    <h4>Saída:</h4>
+                    <div id="program-output" style="background: #000; color: #0f0; padding: 10px; border-radius: 3px; 
+                                                  font-family: 'Courier New', monospace; min-height: 100px; white-space: pre-wrap;">
+                        Aguardando execução...
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; padding: 10px; background: #e7f3ff; border-radius: 5px;">
+                    <h4>Instruções:</h4>
+                    <ul>
+                        <li>Digite os valores de entrada no campo "Entrada" (um valor por linha)</li>
+                        <li>Clique em "Executar" para simular a execução do programa</li>
+                        <li>A saída será exibida no terminal verde</li>
+                        <li>Para programas com loops, a execução será simulada passo a passo</li>
+                    </ul>
+                </div>
+            </div>
             {% else %}
             <p>Aguardando código para compilar...</p>
             {% endif %}
@@ -203,6 +399,100 @@
                         alert('Falha ao copiar o código.');
                     });
                 }
+            }
+
+            function showTab(tabName) {
+                // Esconder todas as abas
+                const tabs = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => tab.classList.remove('active'));
+                
+                // Remover classe active de todos os botões de aba
+                const tabButtons = document.querySelectorAll('.tab');
+                tabButtons.forEach(button => button.classList.remove('active'));
+                
+                // Mostrar a aba selecionada
+                document.getElementById(tabName).classList.add('active');
+                
+                // Adicionar classe active ao botão clicado
+                event.target.classList.add('active');
+            }
+
+            function executeProgram() {
+                const output = document.getElementById('program-output');
+                const input = document.getElementById('program-input').value;
+                const code = document.getElementById('code-editor').value;
+                
+                output.innerHTML = 'Executando programa...\n';
+                
+                // Chamar API de execução
+                fetch('/executar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        codigo: code,
+                        entrada: input
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        output.innerHTML = data.saida || 'Programa executado com sucesso (sem saída)';
+                    } else {
+                        output.innerHTML = 'Erro na execução:\n' + (data.erros || 'Erro desconhecido');
+                    }
+                })
+                .catch(error => {
+                    output.innerHTML = 'Erro ao executar programa:\n' + error.message;
+                });
+            }
+
+            function clearOutput() {
+                document.getElementById('program-output').innerHTML = 'Aguardando execução...';
+                document.getElementById('program-input').value = '';
+            }
+
+            function toggleAccordion(header) {
+                if (!header) return;
+                
+                const section = header.closest('.accordion-section');
+                if (!section) return;
+                
+                const content = section.querySelector('.accordion-content');
+                if (!content) return;
+                
+                const isExpanded = content.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    content.classList.remove('expanded');
+                    header.classList.remove('active');
+                } else {
+                    content.classList.add('expanded');
+                    header.classList.add('active');
+                }
+            }
+
+            // Função para expandir/recolher todos os accordions
+            function toggleAllAccordions(expand) {
+                const headers = document.querySelectorAll('.accordion-header');
+                if (headers.length === 0) return;
+                
+                headers.forEach(header => {
+                    const section = header.closest('.accordion-section');
+                    if (!section) return;
+                    
+                    const content = section.querySelector('.accordion-content');
+                    if (!content) return;
+                    
+                    if (expand) {
+                        content.classList.add('expanded');
+                        header.classList.add('active');
+                    } else {
+                        content.classList.remove('expanded');
+                        header.classList.remove('active');
+                    }
+                });
             }
 
             document.getElementById('load-test').addEventListener('click', function () {

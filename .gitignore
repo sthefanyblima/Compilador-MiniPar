@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Flask
+instance/
+.webassets-cache
+
+# Parser gerado
+parser.out
+parsetab.py
+
+# Arquivos gerados (assembly e executáveis)
+*.s
+*.o
+*.out
+*.exe
+*.elf
+
+# Arquivos temporários de teste
+teste*.s
+
+# Ambientes virtuais
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
