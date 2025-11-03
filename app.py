@@ -1,46 +1,31 @@
-from flask import Flask, render_template, request
-from motor_compilador import compilar_codigo
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Ponto de entrada principal da aplicação Flask
+Redireciona para Core/app.py
+"""
+
 import os
+import sys
 
-app = Flask(__name__)
+# Obter diretórios
+base_dir = os.path.dirname(os.path.abspath(__file__))
+core_dir = os.path.join(base_dir, 'Core')
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    resultados = None
-    codigo_original = ""
+# Adicionar Core ao path
+sys.path.insert(0, core_dir)
 
-    if request.method == 'POST':
-        codigo_original = request.form['codigo']
-        
-        try:
-            tokens, ast_formatada, codigo_c3e, codigo_asm, erros = compilar_codigo(codigo_original)
+# Mudar para o diretório base para que os caminhos relativos funcionem
+os.chdir(base_dir)
 
-            # Formatar tokens e C3E para exibição com quebras de linha
-            tokens_formatados = "\n".join(tokens) if tokens else ""
-            c3e_formatado = "\n".join(codigo_c3e) if codigo_c3e else ""
-            asm_formatado = "\n".join(codigo_asm) if codigo_asm else ""
-
-            resultados = {
-                'tokens': tokens_formatados,
-                'ast_formatada': ast_formatada,
-                'codigo_c3e': c3e_formatado,
-                'codigo_asm': asm_formatado,
-                'erros': erros
-            }
-        except Exception as e:
-            resultados = {
-                'erros': f"Erro durante a compilação: {str(e)}"
-            }
-
-    # Carrega exemplos de teste
-    exemplos = {}
-    for i in range(1, 9):
-        arquivo = f'teste{i}.mp'
-        if os.path.exists(arquivo):
-            with open(arquivo, 'r', encoding='utf-8') as f:
-                exemplos[f'Teste {i}'] = f.read()
-
-    return render_template('index.html', resultados=resultados, codigo_original=codigo_original, exemplos=exemplos)
+# Importar app do Core
+from app import app
 
 if __name__ == '__main__':
+    print("=" * 70)
+    print("Compilador MiniPar - Interface Web")
+    print("=" * 70)
+    print("\nAcesse: http://127.0.0.1:5001")
+    print("Pressione Ctrl+C para parar o servidor\n")
     app.run(debug=True, port=5001)
+
